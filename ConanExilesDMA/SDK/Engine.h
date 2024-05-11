@@ -34,5 +34,6 @@ public:
 	CameraCacheEntry GetCameraCache();
 	void RefreshViewMatrix(VMMDLL_SCATTER_HANDLE handle);
 	uint32_t GetActorSize();
+	std::string GetNameById(uint32_t actor_id);
 
 };
