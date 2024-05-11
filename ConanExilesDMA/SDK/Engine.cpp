@@ -21,6 +21,7 @@ Engine::Engine()
 	printf("LocalPlayers: %p\n", LocalPlayers);
 	LocalPlayers = TargetProcess.Read<uint64_t>(LocalPlayers);
 	printf("LocalPlayers: %p\n", LocalPlayers);
+
 	PlayerController = TargetProcess.Read<uint64_t>(LocalPlayers + PlayerController);
 	printf("PlayerController: %p\n", PlayerController);
 	AcknowledgedPawn = TargetProcess.Read<uint64_t>(PlayerController + AcknowledgedPawn);
@@ -42,6 +43,7 @@ std::string Engine::GetNameById(uint32_t actor_id) {
 		ZeroMemory(name, sizeof(name));
 		TargetProcess.Read((uintptr_t)(fName + 0x10), reinterpret_cast<void*>(&name), sizeof(name) - 2);
 		CachedNames[actor_id] = std::string(name);
+		printf("New Entity Name: %s\n", std::string(name).c_str());
 		return std::string(name);
 
 	return std::string("NULL");
@@ -71,7 +73,7 @@ void Engine::Cache()
 		int objectId = TargetProcess.Read<int>(actor + 0x18);
 
 		std::string name = GetNameById(objectId);
-		printf("Name: %s\n", name.c_str());
+		
 		// BP_NPC_Wildlife_Imp_C
 		//BP_NPC_Wildlife_KappaBaby_C
 		//BP_NPC_Wildlife_Kappa_Green_C
@@ -185,3 +187,7 @@ std::vector<std::shared_ptr<ActorEntity>> Engine::GetPlayers()
 	return Players;
 }
 
+uint64_t Engine::GetPlayerController()
+{
+	return PlayerController;
+}

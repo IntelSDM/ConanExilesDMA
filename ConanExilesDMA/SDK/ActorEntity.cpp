@@ -41,7 +41,8 @@ inline std::unordered_map<EntityType, std::wstring> EntityIDNames = {
 		{EntityType::Wight,LIT(L"Wight")},
 		{EntityType::Wolf,LIT(L"Wolf")},
 		{EntityType::Crocodile,LIT(L"Crocodile")},
-		{EntityType::SnakeBoss,LIT(L"SnakeBoss")}
+		{EntityType::SnakeBoss,LIT(L"SnakeBoss")},
+		{EntityType::Player,LIT(L"Player")}
 
 };
 
@@ -127,7 +128,8 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		EntityID = EntityType::Wight;
 	else if (name.substr(0, 20) == "BP_NPC_Wildlife_Wolf")
 		EntityID = EntityType::Wolf;
-
+	else if(name == "BasePlayerChar_C")
+		EntityID = EntityType::Player;
 	if (EntityIDNames.contains(EntityID))
 		Name = EntityIDNames[EntityID];
 	else
@@ -135,8 +137,9 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 	if(!address)
 		return;
 	 TargetProcess.AddScatterReadRequest(handle,Class + PlayerState,reinterpret_cast<void*>(&PlayerState), sizeof(uint64_t));
-	 TargetProcess.AddScatterReadRequest(handle,Class + AcknowledgedPawn, reinterpret_cast<void*>(&AcknowledgedPawn),sizeof(uint64_t));
+	 TargetProcess.AddScatterReadRequest(handle, Class + Controller, reinterpret_cast<void*>(&Controller), sizeof(uint64_t));
 	 TargetProcess.AddScatterReadRequest(handle, Class + RootComponent, reinterpret_cast<void*>(&RootComponent),sizeof(uint64_t));
+
 
 	
 }
@@ -147,7 +150,21 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 		return;
 	if (!RootComponent)
 		return;
+	
+	if (EntityID == Player)
+	{
+		if (Controller == EngineInstance->GetPlayerController())
+		{
+			//AcknowledgedPawn = TargetProcess.Read<uint64_t>(Controller + AcknowledgedPawn);
+			//uint64_t charactermovement = TargetProcess.Read<uint64_t>(AcknowledgedPawn + 0x0450);
+			// BasePlayerChar_C player is this // HeadVisible
+			printf("Player is Local\n");
+			//TargetProcess.Write<float>(Class + 0x0080, 3); // speedhack
+			//TargetProcess.Write<float>(charactermovement + 0x01F0, 10000);
+		}
+	}
 
+	
 	UEPosition = TargetProcess.Read<UEVector>(RootComponent + RelativeLocation);
 	Position = Vector3(UEPosition.X, UEPosition.Y, UEPosition.Z);
 }

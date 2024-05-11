@@ -39,7 +39,8 @@ enum EntityType : int
 	Jaguar,
 	Tiger,
 	Wight,
-	Wolf
+	Wolf,
+	Player
 
 
 
@@ -53,6 +54,7 @@ private:
 	
 	uint64_t Class = 0;
 	uint64_t PlayerState = 0x0408; // Pawn -> PlayerState
+	uint64_t Controller = 0x0420; // Pawn -> Controller
 	uint64_t AcknowledgedPawn = 0x0460; // playercontroller -> AcknowledgedPawn
 	uint64_t RootComponent = 0x0170; // Actor -> RootComponent
 	uint64_t RelativeLocation = 0x01F0; // SceneComponent -> RelativeLocation
