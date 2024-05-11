@@ -92,7 +92,7 @@ std::shared_ptr<CheatFunction> Cache = std::make_shared<CheatFunction>(3000, [] 
 		EngineInstance = std::make_shared<Engine>();
 		return;
 	}
-	if (!EngineInstance->GetActorSize() <= 0 || EngineInstance->GetActorSize() >= 2000)
+	if (!EngineInstance->GetPlayers().size() <= 0)
 	{
 		EngineInstance = std::make_shared<Engine>();
 	}
@@ -110,7 +110,7 @@ std::shared_ptr<CheatFunction> UpdateViewMatrix = std::make_shared<CheatFunction
 
 void RenderFrame()
 {
-	//Cache->Execute();
+	Cache->Execute();
 	UpdateViewMatrix->Execute();
 	UpdatePlayers->Execute();
 	RenderTarget->BeginDraw();

@@ -70,23 +70,75 @@ void Engine::Cache()
 
 		int objectId = TargetProcess.Read<int>(actor + 0x18);
 
-		uint64_t playerstate = TargetProcess.Read<uint64_t>(actor + 0x0408);// pawn -> playerstate 
-		if (!playerstate)
-			continue;
-
-		uint64_t rootcomponent = TargetProcess.Read<uint64_t>(actor + 0x0170);// Actor -> rootcomponent 
-		if (!rootcomponent)
-			continue;
-
 		std::string name = GetNameById(objectId);
+		printf("Name: %s\n", name.c_str());
+		// BP_NPC_Wildlife_Imp_C
+		//BP_NPC_Wildlife_KappaBaby_C
+		//BP_NPC_Wildlife_Kappa_Green_C
+		//HumanoidNPCCharacter_C
+		//BP_NPC_Wildlife_Crocodile_C
+		//Corpse_C
+		//BP_NPC_Wildlife_Rabbit_C
+		// BP_HumanoidDialogueNPC_C // talkable npc
+		//BP_NPC_Wildlife_HyenaSpotted_C
+		//BP_NPC_Wildlife_Kappa_Red_C
+		//BP_NPC_Wildlife_Vulture_idling_C
+		//BP_PL_CraftingStation_Furnace_C
+		//BP_PL_CraftingStation_Armor_C
+		// //BP_PL_CraftingStation_Metal_C
+		//LandClaim
+		//BP_BuildFoundation_C
+		//BP_NPC_Wildlife_HyenaSpotted_Puppy_C
+		//BP_NPC_Wildlife_Crocodile_Baby_C
+		//BP_NPC_Wildlife_Kappa_Red_C
+		//BP_PL_WorkStation_Tanner_C
+		//BP_NPC_Wildlife_Gazelle_C
+		//BP_PL_Bedroll_Fiber_C
+		//BP_PL_WorkStation_Alchemist2_C
+		//BP_NPC_Wildlife_Rocknose_Coal_C
+		//BP_NPC_Wildlife_Rocknose_Iron_C
+		//BP_NPC_Wildlife_Ostrich_Blue_Farm_C
+		//BP_NPC_Wildlife_Ostrich_Red_Farm_C
+		//BP_NPC_Wildlife_Kudo_C
+		//BP_NPC_Wildlife_Fawn_C
+		//BP_NPC_Wildlife_Ostrich_Blue_Farm_C
+		//BP_NPC_Wildlife_HyenaMiniboss_
+		//BP_NPC_Wildlife_Spider_Brown_C
+		//Name: BP_NPC_Wildlife_Slamander_Desert_C
+	// BP_NPC_Wildlife_Spider_Green_C
+		//BP_NPC_Wildlife_MediumScorpion_C
+		//BP_NPC_Wildlife_Cobra_C
+		//BP_NPC_Wildlife_Antilope_C
+		//BP_NPC_Wildlife_RhinoKing_C
+		//HumanoidNPCCharacter_MurielasHope_C
+		//BP_NPC_Wildlife_GiantScorpion_C
+		//BP_NPC_Wildlife_RocknoseRocky2_C
+		//BP_NPC_Wildlife_RocknoseKingBoss_C
+		//BP_set_snake_desert_C
+		//HumanoidNPCCharacter_RelicHunters_C
+		//BP_NPC_Wildlife_Locust_yellow_C
+		//BP_NPC_Wildlife_Jaguar_Cub_C
+		//BP_NPC_Wildlife_Jaguar_C
+		//BP_NPC_Wildlife_Tiger_C
+		//BP_NPC_Wildlife_RhinoGray_C
+		//BP_NPC_Wildlife_RhinoGray_Baby_C
+		//BP_NPC_Wildlife_Tiger_White_C
+		//BP_NPC_Wildlife_Wight_3_C
+		//BP_NPC_Wildlife_Wight_2_C
+		//BP_NPC_Wildlife_Wight_4_C
+		//BP_NPC_Wildlife_Wight_1_C
+		//HumanoidNPCCharacter_Nordheimer_C
+		//BP_NPC_Wildlife_Wolf_NordheimerPet_C
+
 		if (name == "NULL")
 			continue;
-		if (name != "BasePlayerChar_C" && name != "BP_PlayerLight_C")
-			continue;
-		printf("Actor: %p\n", actor);
-		printf("Name: %s\n", name.c_str());
+//		if (name != "BasePlayerChar_C")
+	//		continue;
+	//	printf("Actor: %p\n", actor);
+	
 
-		std::shared_ptr<ActorEntity> entity = std::make_shared<ActorEntity>(actor, handle);
+		std::shared_ptr<ActorEntity> entity = std::make_shared<ActorEntity>(actor,name, handle);
+
 		actors.push_back(entity);
 	}
 	TargetProcess.ExecuteReadScatter(handle);
@@ -100,59 +152,10 @@ void Engine::Cache()
 	TargetProcess.CloseScatterHandle(handle);
 
 	Players = actors;
-	printf("Ended\n");
 }
 
 
-/*	OwningActor = TargetProcess.Read<uint64_t>(PersistentLevel + OwningActorOffset);
-	MaxPacket = TargetProcess.Read<uint32_t>(PersistentLevel + MaxPacketOffset);
 
-	printf("Actor Array: %p\n", OwningActor);
-	printf("Actor Array Size: %d\n", MaxPacket);
-
-	std::vector<uint64_t> entitylist;
-	entitylist.resize(MaxPacket);
-	std::unique_ptr<uint64_t[]> object_raw_ptr = std::make_unique<uint64_t[]>(MaxPacket);
-	TargetProcess.Read(OwningActor, object_raw_ptr.get(), MaxPacket * sizeof(uint64_t));
-	for (size_t i = 0; i < MaxPacket; i++)
-	{
-		entitylist[i] = object_raw_ptr[i];
-	}
-	std::list<std::shared_ptr<ActorEntity>> actors;
-	auto handle = TargetProcess.CreateScatterHandle();
-	for (uint64_t address : entitylist)
-	{
-		uintptr_t actor = address;
-		if (!actor)
-			continue;
-		
-			std::shared_ptr<ActorEntity> entity = std::make_shared<ActorEntity>(actor, handle);
-			actors.push_back(entity);
-		
-	}
-	TargetProcess.ExecuteReadScatter(handle);
-	TargetProcess.CloseScatterHandle(handle);
-
-
-	handle = TargetProcess.CreateScatterHandle();
-	for (std::shared_ptr<ActorEntity> entity : actors)
-	{
-		entity->SetUp1(handle);
-	}
-	TargetProcess.ExecuteReadScatter(handle);
-	TargetProcess.CloseScatterHandle(handle);
-	std::vector<std::shared_ptr<ActorEntity>> playerlist;
-	for (std::shared_ptr<ActorEntity> entity : actors)
-	{
-		entity->SetUp2();
-		if (entity->GetName() == LIT(L"Entity"))
-			continue;
-		if(entity->GetPosition() == Vector3::Zero())
-						continue;
-		playerlist.push_back(entity);
-	}
-	Actors = playerlist;
-}*/
 
 
 void Engine::UpdatePlayers()
@@ -182,7 +185,3 @@ std::vector<std::shared_ptr<ActorEntity>> Engine::GetPlayers()
 	return Players;
 }
 
-uint32_t Engine::GetActorSize()
-{
-	return MaxPacket;
-}

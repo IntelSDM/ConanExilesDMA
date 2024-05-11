@@ -7,10 +7,6 @@ class Engine
 {
 
 private:
-	uint64_t OwningActorOffset = 0x0090; // NetConnection -> OwningActor
-	uint64_t MaxPacketOffset = 0x0098; // NetConnection -> MaxPacket
-	uint64_t OwningActor;
-	uint64_t MaxPacket;
 	uint64_t OwningGameInstance = 0x0140; // World -> OwningGameInstance
 	uint64_t PersistentLevel = 0x0030; // World  -> PersistentLevel
 	uint64_t ActorsOffset = 0xA0; // Ulevel -> Actors
@@ -33,7 +29,6 @@ public:
 	std::vector<std::shared_ptr<ActorEntity>> GetPlayers();
 	CameraCacheEntry GetCameraCache();
 	void RefreshViewMatrix(VMMDLL_SCATTER_HANDLE handle);
-	uint32_t GetActorSize();
 	std::string GetNameById(uint32_t actor_id);
 
 };

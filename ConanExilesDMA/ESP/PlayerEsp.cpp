@@ -22,8 +22,6 @@ void DrawPlayerEsp()
 		if (entity->GetPosition() == Vector3(0, 0, 0))
 			continue;
 		PlayerConfig config = Configs.Survivor;
-		if (entity->GetPlayerRole() == EPlayerRole::EPlayerRole__VE_Slasher)
-			config = Configs.Killer;
 
 		Vector2 screenpos = Camera::WorldToScreen(EngineInstance->GetCameraCache().POV, entity->GetPosition());
 		if (screenpos == Vector2::Zero())
