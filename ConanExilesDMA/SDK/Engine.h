@@ -21,16 +21,16 @@ private:
 	uint64_t PlayerController = 0x0030; // Player -> PlayerController
 	uint64_t AcknowledgedPawn = 0x0460;
 	uint64_t CameraManager = 0x0480; // PlayerController -> PlayerCameraManager
-	uint64_t CameraCachePrivate = 0x0; // PlayerCameraManager -> CameraCachePrivate
-	uint64_t CameraCachePrivateOffset = 0x0460; // PlayerCameraManager -> CameraCachePrivate
+	uint64_t CameraCache= 0x0; // PlayerCameraManager -> CameraCachePrivate
+	uint64_t CameraCacheOffset = 0x0460; // PlayerCameraManager -> CameraCache
 	CameraCacheEntry CameraEntry; // ScriptStruct Engine.CameraCacheEntry
 	MinimalViewInfo CameraViewInfo; // ScriptStruct Engine.MinimalViewInfo
-	//std::vector<std::shared_ptr<ActorEntity>> Actors;
+	std::vector<std::shared_ptr<ActorEntity>> Players;
 public:
 	Engine();
 	void Cache();
 	void UpdatePlayers();
-	//std::vector<std::shared_ptr<ActorEntity>> GetActors();
+	std::vector<std::shared_ptr<ActorEntity>> GetPlayers();
 	CameraCacheEntry GetCameraCache();
 	void RefreshViewMatrix(VMMDLL_SCATTER_HANDLE handle);
 	uint32_t GetActorSize();

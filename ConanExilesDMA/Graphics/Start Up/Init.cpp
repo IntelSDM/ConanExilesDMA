@@ -111,12 +111,12 @@ std::shared_ptr<CheatFunction> UpdateViewMatrix = std::make_shared<CheatFunction
 void RenderFrame()
 {
 	//Cache->Execute();
-	//UpdateViewMatrix->Execute();
-//	UpdatePlayers->Execute();
+	UpdateViewMatrix->Execute();
+	UpdatePlayers->Execute();
 	RenderTarget->BeginDraw();
 	RenderTarget->Clear(Colour(0, 0, 0, 255)); // clear over the last buffer
 	RenderTarget->SetTransform(D2D1::Matrix3x2F::Identity()); // set new transform
-//	DrawPlayerEsp();
+	DrawPlayerEsp();
 //	Render();
 	RenderTarget->EndDraw();
 }

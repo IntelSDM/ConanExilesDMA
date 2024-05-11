@@ -9,15 +9,15 @@
 
 std::shared_ptr<CheatFunction> UpdatePlayers = std::make_shared<CheatFunction>(10, [] {
 	if (!EngineInstance)
-		return;
-	//EngineInstance->UpdatePlayers();
+		return;	
+	EngineInstance->UpdatePlayers();
 	});
 
 void DrawPlayerEsp()
 {
 	if (!EngineInstance)
 		return;
-	/*for (auto entity : EngineInstance->GetActors())
+	for (auto entity : EngineInstance->GetPlayers())
 	{
 		if (entity->GetPosition() == Vector3(0, 0, 0))
 			continue;
@@ -37,6 +37,6 @@ void DrawPlayerEsp()
 		if (distance > config.MaxDistance)
 			continue;
 		DrawText(screenpos.x, screenpos.y, name + wdistance, "Verdana", config.FontSize, config.TextColour, CentreCentre);
-	}*/
+	}
 	
 }

@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "ActorEntity.h"
 #include "Globals.h"
+#include <Camera.h>
 
 Engine::Engine()
 {
@@ -26,45 +27,21 @@ Engine::Engine()
 	printf("AcknowledgedPawn: %p\n", AcknowledgedPawn);
 	CameraManager = TargetProcess.Read<uint64_t>(PlayerController + CameraManager);
 	printf("CameraManager: %p\n", CameraManager);
-	CameraEntry = TargetProcess.Read<CameraCacheEntry>(CameraManager + CameraCachePrivateOffset);
+	CameraEntry = TargetProcess.Read<CameraCacheEntry>(CameraManager + CameraCacheOffset);
 	printf("CameraCacheEntry: %p\n", CameraEntry);
 
 }
+std::unordered_map<uint32_t, std::string> CachedNames;
 std::string Engine::GetNameById(uint32_t actor_id) {
-	/*char name[256];
+	if(CachedNames.contains(actor_id))
+		return CachedNames[actor_id];
 
-	uint32_t chunk_offset = actor_id >> 16;
-	uint16_t name_offset = (uint16_t)actor_id;
-	uintptr_t fname_pool = TargetProcess.GetBaseAddress(ProcessName) + GName;
-
-	uintptr_t name_pool_chunk = TargetProcess.Read<uintptr_t>(fname_pool + ((chunk_offset + 2) * 8));
-	printf("Name Pool Chunk: %p\n", name_pool_chunk);
-	if (name_pool_chunk) {
-		uintptr_t entry_offset = name_pool_chunk + (uint32_t)(2 * name_offset);
-		if (entry_offset) {
-
-			uint16_t name_entry = TargetProcess.Read<uint16_t>(entry_offset);
-
-			uint32_t name_length = (name_entry >> 6);
-
-			if (name_length > 256)
-			{
-				name_length = 255;
-			}
-
-			auto result = TargetProcess.Read(entry_offset + 0x2, &name, name_length);
-			return name;
-
-
-		}
-	}*/
-
-	
 		DWORD64 fNamePtr = TargetProcess.Read<DWORD64>(GName + (actor_id / 0x4000) * 8);
 		DWORD64 fName = TargetProcess.Read<DWORD64>(fNamePtr + 8 * (actor_id % 0x4000));
 		char name[64];
 		ZeroMemory(name, sizeof(name));
 		TargetProcess.Read((uintptr_t)(fName + 0x10), reinterpret_cast<void*>(&name), sizeof(name) - 2);
+		CachedNames[actor_id] = std::string(name);
 		return std::string(name);
 
 	return std::string("NULL");
@@ -79,11 +56,12 @@ void Engine::Cache()
 	std::unique_ptr<uint64_t[]> object_raw_ptr = std::make_unique<uint64_t[]>(Actors.Length());
 	TargetProcess.Read(Actors.GetAddress(), object_raw_ptr.get(), Actors.Length() * sizeof(uint64_t));
 
-		for (size_t i = 0; i < Actors.Length(); i++)
+	for (size_t i = 0; i < Actors.Length(); i++)
 	{
 		entitylist[i] = object_raw_ptr[i];
 	}
-
+	std::vector<std::shared_ptr<ActorEntity>> actors;
+	auto handle = TargetProcess.CreateScatterHandle();
 	for (uint64_t address : entitylist)
 	{
 		uintptr_t actor = address;
@@ -91,10 +69,10 @@ void Engine::Cache()
 			continue;
 
 		int objectId = TargetProcess.Read<int>(actor + 0x18);
-		
+
 		uint64_t playerstate = TargetProcess.Read<uint64_t>(actor + 0x0408);// pawn -> playerstate 
-		if(!playerstate)
-						continue;
+		if (!playerstate)
+			continue;
 
 		uint64_t rootcomponent = TargetProcess.Read<uint64_t>(actor + 0x0170);// Actor -> rootcomponent 
 		if (!rootcomponent)
@@ -103,35 +81,27 @@ void Engine::Cache()
 		std::string name = GetNameById(objectId);
 		if (name == "NULL")
 			continue;
+		if (name != "BasePlayerChar_C" && name != "BP_PlayerLight_C")
+			continue;
 		printf("Actor: %p\n", actor);
 		printf("Name: %s\n", name.c_str());
-	
-//	printf("Actor: %p\n", actor);
-	/*uint64_t test = TargetProcess.Read<uint64_t>(actor + 0x1B58);
-	if(!test)
-		continue;
-	//printf("Test: %p\n", test);
-	FString playername;
-	auto handle = TargetProcess.CreateScatterHandle();
-	TargetProcess.AddScatterReadRequest(handle, actor + 0x1B58, &playername, sizeof(TArray<FString>));
-	TargetProcess.ExecuteReadScatter(handle);
-	TargetProcess.CloseScatterHandle(handle);
 
-	handle = TargetProcess.CreateScatterHandle();
-	playername.QueueString(handle);
-	TargetProcess.ExecuteReadScatter(handle);
-	TargetProcess.CloseScatterHandle(handle);
-
-
-	if (!&playername)
-		continue;
-
-	printf("Actor Name: %s\n", playername.buffer);*/
-	
-
+		std::shared_ptr<ActorEntity> entity = std::make_shared<ActorEntity>(actor, handle);
+		actors.push_back(entity);
 	}
-	printf("Ended\n");
+	TargetProcess.ExecuteReadScatter(handle);
+	TargetProcess.CloseScatterHandle(handle);
+	handle = TargetProcess.CreateScatterHandle();
+	for (auto actor : actors)
+	{
+		actor->SetUp1(handle);
+	}
+	TargetProcess.ExecuteReadScatter(handle);
+	TargetProcess.CloseScatterHandle(handle);
 
+	Players = actors;
+	printf("Ended\n");
+}
 
 
 /*	OwningActor = TargetProcess.Read<uint64_t>(PersistentLevel + OwningActorOffset);
@@ -182,20 +152,24 @@ void Engine::Cache()
 		playerlist.push_back(entity);
 	}
 	Actors = playerlist;
-}
+}*/
+
+
 void Engine::UpdatePlayers()
 {
 	auto handle = TargetProcess.CreateScatterHandle();
-	for (std::shared_ptr<ActorEntity> entity : Actors)
+	for (std::shared_ptr<ActorEntity> entity : Players)
 	{
 		entity->UpdatePosition(handle);
 	}
 	TargetProcess.ExecuteReadScatter(handle);
-	TargetProcess.CloseScatterHandle(handle);*/
+	TargetProcess.CloseScatterHandle(handle);
 }
+
+
 void Engine::RefreshViewMatrix(VMMDLL_SCATTER_HANDLE handle)
 {
-	//TargetProcess.AddScatterReadRequest(handle, CameraManager + CameraCachePrivateOffset,reinterpret_cast<void*>(&CameraEntry),sizeof(CameraCacheEntry));
+	TargetProcess.AddScatterReadRequest(handle, CameraManager + CameraCacheOffset,reinterpret_cast<void*>(&CameraEntry),sizeof(CameraCacheEntry));
 }
 
 CameraCacheEntry Engine::GetCameraCache()
@@ -203,10 +177,10 @@ CameraCacheEntry Engine::GetCameraCache()
 	return CameraEntry;
 }
 
-/*std::vector<std::shared_ptr<ActorEntity>> Engine::GetActors()
+std::vector<std::shared_ptr<ActorEntity>> Engine::GetPlayers()
 {
-//	return Actors;
-}*/
+	return Players;
+}
 
 uint32_t Engine::GetActorSize()
 {
