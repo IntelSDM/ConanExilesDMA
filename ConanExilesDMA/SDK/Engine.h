@@ -22,15 +22,20 @@ private:
 	CameraCacheEntry CameraEntry; // ScriptStruct Engine.CameraCacheEntry
 	MinimalViewInfo CameraViewInfo; // ScriptStruct Engine.MinimalViewInfo
 	std::vector<std::shared_ptr<ActorEntity>> Players;
+	std::vector<std::shared_ptr<ActorEntity>> OtherActors;
 public:
 	std::atomic<std::shared_ptr<ActorEntity>> LocalPlayer;
+	std::mutex PlayersMutex;
+	std::mutex OtherActorsMutex;
 	Engine();
 	void Cache();
 	void UpdatePlayers();
 	std::vector<std::shared_ptr<ActorEntity>> GetPlayers();
+	std::vector<std::shared_ptr<ActorEntity>> GetOtherActors();
 	CameraCacheEntry GetCameraCache();
 	void RefreshViewMatrix(VMMDLL_SCATTER_HANDLE handle);
 	std::string GetNameById(uint32_t actor_id);
 	uint64_t GetPlayerController();
+
 
 };

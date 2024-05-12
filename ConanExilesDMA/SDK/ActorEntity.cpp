@@ -156,7 +156,7 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 	if (!RootComponent)
 		return;
 	
-	if (EntityID == Player)
+	if (EntityID == Player || EntityID == Humanoid)
 	{
 		TargetProcess.AddScatterReadRequest(handle,Mesh + ComponentToWorld, reinterpret_cast<void*>(&C2W), sizeof(FTransform));
 		TargetProcess.AddScatterReadRequest(handle, Mesh + MasterPoseComponent,reinterpret_cast<void*>(&MasterPoseComponent),sizeof(uint64_t));
@@ -179,7 +179,7 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 
 void ActorEntity::SetUp2(VMMDLL_SCATTER_HANDLE handle)
 {
-	if (EntityID == Player)
+	if (EntityID == Player || EntityID == Humanoid)
 	{
 
 		GetBoneIndex(handle, HeadTransform, MasterPoseComponent, 8); // head
@@ -189,7 +189,7 @@ void ActorEntity::SetUp2(VMMDLL_SCATTER_HANDLE handle)
 }
 void ActorEntity::SetUp3()
 {
-	if (EntityID == Player)
+	if (EntityID == Player || EntityID == Humanoid)
 	{
 		
 		HeadBone = Camera::ResolveMatrix(HeadTransform, C2W);
@@ -201,7 +201,7 @@ void ActorEntity::SetUp3()
 
 void ActorEntity::UpdateHeadPosition(VMMDLL_SCATTER_HANDLE handle)
 {
-	if (EntityID == Player)
+	if (EntityID == Player || EntityID == Humanoid)
 	{
 		TargetProcess.AddScatterReadRequest(handle, Mesh + ComponentToWorld, reinterpret_cast<void*>(&C2W), sizeof(FTransform));
 		GetBoneIndex(handle, HeadTransform, MasterPoseComponent, 8); // head
@@ -209,7 +209,7 @@ void ActorEntity::UpdateHeadPosition(VMMDLL_SCATTER_HANDLE handle)
 }
 void ActorEntity::UpdateHeadPosition1()
 {
-	if (EntityID == Player)
+	if (EntityID == Player || EntityID == Humanoid)
 	{
 		HeadBone = Camera::ResolveMatrix(HeadTransform, C2W);
 	}

@@ -18,7 +18,10 @@ void DrawPlayerEsp()
 {
 	if (!EngineInstance.load())
 		return;
-	for (auto entity : EngineInstance.load()->GetPlayers())
+	EngineInstance.load()->PlayersMutex.lock();
+	std::vector<std::shared_ptr<ActorEntity>> players = EngineInstance.load()->GetPlayers();
+	EngineInstance.load()->PlayersMutex.unlock();
+	for (auto entity : players)
 	{
 		if (entity->GetPosition() == Vector3(0, 0, 0))
 			continue;
@@ -36,7 +39,7 @@ void DrawPlayerEsp()
 		if (distance > config.MaxDistance)
 			continue;
 		DrawText(screenpos.x, screenpos.y, name + wdistance, "Verdana", config.FontSize, config.TextColour, CentreCentre);
-		if (entity->GetEntityID() == Player)
+		if (entity->GetEntityID() == Player || entity->GetEntityID() == Humanoid)
 		{
 			if (entity->GetHeadPosition() == Vector3(0, 0, 0))
 				continue;

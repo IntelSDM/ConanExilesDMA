@@ -163,7 +163,31 @@ void Engine::Cache()
 	{
 		actor->SetUp3();
 	}
-	Players = actors;
+
+	std::vector<std::shared_ptr<ActorEntity>> players;
+	std::vector<std::shared_ptr<ActorEntity>> others;
+	for (auto actor : actors)
+	{
+		if (actor->GetIsLocalPlayer())
+		{
+			LocalPlayer.store(actor);
+			continue;
+		}
+		if (actor->GetEntityID() == EntityType::Player || actor->GetEntityID() == Humanoid)
+		{
+			players.push_back(actor);
+		}
+		else
+		{
+			others.push_back(actor);
+		}
+	}
+	PlayersMutex.lock();
+	Players = players;
+	PlayersMutex.unlock();
+	OtherActorsMutex.lock();
+	OtherActors = others;
+	OtherActorsMutex.unlock();
 }
 
 
@@ -172,18 +196,21 @@ void Engine::Cache()
 
 void Engine::UpdatePlayers()
 {
+	PlayersMutex.lock();
 	auto handle = TargetProcess.CreateScatterHandle();
 	for (std::shared_ptr<ActorEntity> entity : Players)
 	{
 		entity->UpdatePosition(handle);
 	}
+	PlayersMutex.unlock();
 	TargetProcess.ExecuteReadScatter(handle);
 	TargetProcess.CloseScatterHandle(handle);
+	PlayersMutex.lock();
 	for (std::shared_ptr<ActorEntity> entity : Players)
 	{
 		entity->UpdateHeadPosition1();
 	}
-	
+	PlayersMutex.unlock();
 }
 
 
@@ -200,6 +227,11 @@ CameraCacheEntry Engine::GetCameraCache()
 std::vector<std::shared_ptr<ActorEntity>> Engine::GetPlayers()
 {
 	return Players;
+}
+
+std::vector<std::shared_ptr<ActorEntity>> Engine::GetOtherActors()
+{
+	return OtherActors;
 }
 
 uint64_t Engine::GetPlayerController()
