@@ -23,6 +23,7 @@ private:
 	MinimalViewInfo CameraViewInfo; // ScriptStruct Engine.MinimalViewInfo
 	std::vector<std::shared_ptr<ActorEntity>> Players;
 public:
+	std::atomic<std::shared_ptr<ActorEntity>> LocalPlayer;
 	Engine();
 	void Cache();
 	void UpdatePlayers();

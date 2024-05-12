@@ -54,7 +54,7 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		EntityID = EntityType::Imp;
 	else if (name.substr(0, 21) == "BP_NPC_Wildlife_Kappa")
 		EntityID = EntityType::Kappa;
-	else if (name.substr(0, 22) == "HumanoidNPCCharacter")
+	else if (name.substr(0, 20) == "HumanoidNPCCharacter")
 		EntityID = EntityType::Humanoid;
 	else if (name == "Corpse_C")
 		EntityID = EntityType::Corpse;
@@ -63,7 +63,7 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 	else if (name == "BP_HumanoidDialogueNPC_C")
 		EntityID = EntityType::DialogNPC;
 	else if (name.substr(0, 25) == "BP_NPC_Wildlife_Crocodile")
-		EntityID = EntityType::Humanoid;
+		EntityID = EntityType::Crocodile;
 	else if (name == "BP_NPC_Wildlife_HyenaMiniboss_")
 		EntityID = EntityType::HyenaBoss;
 	else if (name.substr(0, 21) == "BP_NPC_Wildlife_Hyena")
@@ -161,12 +161,12 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 		TargetProcess.AddScatterReadRequest(handle,Mesh + ComponentToWorld, reinterpret_cast<void*>(&C2W), sizeof(FTransform));
 		TargetProcess.AddScatterReadRequest(handle, Mesh + MasterPoseComponent,reinterpret_cast<void*>(&MasterPoseComponent),sizeof(uint64_t));
 		
-			if (Controller == EngineInstance->GetPlayerController())
+			if (Controller == EngineInstance.load()->GetPlayerController())
 			{
 				//AcknowledgedPawn = TargetProcess.Read<uint64_t>(Controller + AcknowledgedPawn);
 				//uint64_t charactermovement = TargetProcess.Read<uint64_t>(AcknowledgedPawn + 0x0450);
 				// BasePlayerChar_C player is this // HeadVisible
-
+				IsLocalPlayer = true;
 				TargetProcess.Write<float>(Class + 0x0080, 3); // speedhack
 				//TargetProcess.Write<float>(charactermovement + 0x01F0, 10000);
 			}
@@ -236,8 +236,6 @@ void ActorEntity::UpdatePosition(VMMDLL_SCATTER_HANDLE handle)
 		return;
 	if (!RootComponent)
 		return;
-	if (!PlayerState)
-		return;
 	TargetProcess.AddScatterReadRequest(handle, RootComponent + RelativeLocation, reinterpret_cast<void*>(&UEPosition), sizeof(UEVector));
 	UpdateHeadPosition(handle);
 }
@@ -250,4 +248,9 @@ EntityType ActorEntity::GetEntityID()
 Vector3 ActorEntity::GetHeadPosition()
 {
 	return HeadBone;
+}
+
+bool ActorEntity::GetIsLocalPlayer()
+{
+	return IsLocalPlayer;
 }

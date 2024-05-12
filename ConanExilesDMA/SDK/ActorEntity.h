@@ -68,6 +68,7 @@ private:
 	Vector3 Position;
 	EntityType EntityID;
 	Vector3 HeadBone;
+	bool IsLocalPlayer = false;
 public:
 	
 	ActorEntity(uint64_t address,std::string name, VMMDLL_SCATTER_HANDLE handle);
@@ -82,5 +83,6 @@ public:
 	void UpdatePosition(VMMDLL_SCATTER_HANDLE handle);
 	EntityType GetEntityID();
 	Vector3 GetHeadPosition();
+	bool GetIsLocalPlayer();
 
 };

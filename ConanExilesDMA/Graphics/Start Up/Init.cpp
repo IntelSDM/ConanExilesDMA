@@ -87,22 +87,22 @@ void InitialiseClasses()
 }
 
 std::shared_ptr<CheatFunction> Cache = std::make_shared<CheatFunction>(3000, [] {
-	if (!EngineInstance)
+	if (!EngineInstance.load())
 	{
 		EngineInstance = std::make_shared<Engine>();
 		return;
 	}
-	if (!EngineInstance->GetPlayers().size() <= 0)
-	{
-		EngineInstance = std::make_shared<Engine>();
-	}
-	EngineInstance->Cache();
+//	if (!EngineInstance.load()->GetPlayers().size() <= 0)
+//	{
+//		EngineInstance = std::make_shared<Engine>();
+//	}
+	EngineInstance.load()->Cache();
 	});
 std::shared_ptr<CheatFunction> UpdateViewMatrix = std::make_shared<CheatFunction>(5, [] {
-	if (!EngineInstance)
+	if (!EngineInstance.load())
 		return;
 	auto handle = TargetProcess.CreateScatterHandle();
-	EngineInstance->RefreshViewMatrix(handle);
+	EngineInstance.load()->RefreshViewMatrix(handle);
 	TargetProcess.ExecuteReadScatter(handle);
 	TargetProcess.CloseScatterHandle(handle);
 

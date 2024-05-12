@@ -5,7 +5,7 @@
 #include "Init.h"
 #include "GUI.h"
 #include "Engine.h"
-std::shared_ptr<Engine> EngineInstance;
+std::atomic<std::shared_ptr<Engine>> EngineInstance;
 std::string ProcessName;
 
 void main()
@@ -25,8 +25,8 @@ void main()
 
 	uint64_t base = TargetProcess.GetBaseAddress(ProcessName);
 	uint64_t size = TargetProcess.GetBaseSize(ProcessName);
-	EngineInstance = std::make_shared<Engine>();
-	EngineInstance->Cache();
+	EngineInstance.store(std::make_shared<Engine>());
+	EngineInstance.load()->Cache();
 
 	
 
