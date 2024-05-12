@@ -52,6 +52,7 @@ std::string Engine::GetNameById(uint32_t actor_id) {
 void Engine::Cache()
 {
 	Actors = TargetProcess.Read<TArray<uint64_t>>(PersistentLevel + ActorsOffset);
+	ActorCount = Actors.Length();
 	printf("Actors: %i\n", Actors.Length());
 	std::vector<uint64_t> entitylist;
 	entitylist.resize(Actors.Length());
@@ -237,4 +238,9 @@ std::vector<std::shared_ptr<ActorEntity>> Engine::GetOtherActors()
 uint64_t Engine::GetPlayerController()
 {
 	return PlayerController;
+}
+
+int Engine::GetActorCount()
+{
+	return ActorCount;
 }
