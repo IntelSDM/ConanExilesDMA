@@ -19,13 +19,14 @@ void DrawPlayerEsp()
 		return;
 	for (auto entity : EngineInstance->GetPlayers())
 	{
-		if (entity->GetPosition() == Vector3(0, 0, 0))
+		if (entity->BoneTest == Vector3(0, 0, 0))
 			continue;
 		PlayerConfig config = Configs.Survivor;
 
 		Vector2 screenpos = Camera::WorldToScreen(EngineInstance->GetCameraCache().POV, entity->BoneTest);
 		if (screenpos == Vector2::Zero())
 			continue;
+		printf("ScreenPos: %f %f\n", screenpos.x, screenpos.y);
 		Vector3 campos = Vector3(EngineInstance->GetCameraCache().POV.Location.X, EngineInstance->GetCameraCache().POV.Location.Y, EngineInstance->GetCameraCache().POV.Location.Z);
 		float distance = (Vector3::Distance(campos, entity->GetPosition()) / 39.62f) - 6;
 		if (distance < 0)

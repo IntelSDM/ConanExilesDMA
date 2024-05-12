@@ -196,25 +196,15 @@ Vector3 ResolveMatrix(FTransform transform, FTransform c2w)
 	ViewMatrix matrix; 
 	ViewMatrix bonematrix = ToMatrixWithScale(transform);
 	ViewMatrix c2wmatrix = ToMatrixWithScale(c2w);
-	matrix.matrix[0][0] = bonematrix.matrix[0][0] * c2wmatrix.matrix[0][0];
-	matrix.matrix[0][1] = bonematrix.matrix[0][1] * c2wmatrix.matrix[0][1];
-	matrix.matrix[0][2] = bonematrix.matrix[0][2] * c2wmatrix.matrix[0][2];
-	matrix.matrix[0][3] = bonematrix.matrix[0][3] * c2wmatrix.matrix[0][3];
-
-	matrix.matrix[1][0] = bonematrix.matrix[1][0] * c2wmatrix.matrix[1][0];
-	matrix.matrix[1][1] = bonematrix.matrix[1][1] * c2wmatrix.matrix[1][1];
-	matrix.matrix[1][2] = bonematrix.matrix[1][2] * c2wmatrix.matrix[1][2];
-	matrix.matrix[1][3] = bonematrix.matrix[1][3] * c2wmatrix.matrix[1][3];
-
-	matrix.matrix[2][0] = bonematrix.matrix[2][0] * c2wmatrix.matrix[2][0];
-	matrix.matrix[2][1] = bonematrix.matrix[2][1] * c2wmatrix.matrix[2][1];
-	matrix.matrix[2][2] = bonematrix.matrix[2][2] * c2wmatrix.matrix[2][2];
-	matrix.matrix[2][3] = bonematrix.matrix[2][3] * c2wmatrix.matrix[2][3];
-
-	matrix.matrix[3][0] = bonematrix.matrix[3][0] * c2wmatrix.matrix[3][0];
-	matrix.matrix[3][1] = bonematrix.matrix[3][1] * c2wmatrix.matrix[3][1];
-	matrix.matrix[3][2] = bonematrix.matrix[3][2] * c2wmatrix.matrix[3][2];
-	matrix.matrix[3][3] = bonematrix.matrix[3][3] * c2wmatrix.matrix[3][3];
+	int i, j, k;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
+			matrix.matrix[i][j] = 0;
+			for (k = 0; k < 4; k++) {
+				matrix.matrix[i][j] += bonematrix.matrix[i][k] * c2wmatrix.matrix[k][j];
+			}
+		}
+	}
 
 
 	return Vector3{ matrix.matrix[3][0],  matrix.matrix[3][1],  matrix.matrix[3][2] };
@@ -235,9 +225,10 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 		printf("Translation %f,%f,%f\n", ComponentToWorld.Translation.X, ComponentToWorld.Translation.Y, ComponentToWorld.Translation.Z);
 		printf("Rotation %f,%f,%f,%f\n", ComponentToWorld.Rotation.X, ComponentToWorld.Rotation.Y, ComponentToWorld.Rotation.Z, ComponentToWorld.Rotation.W);
 		auto test = TargetProcess.Read<uint64_t>(Mesh + MasterPoseComponent);
+		printf("MasterPoseComponent %p\n", test);
 		// printf test.length()
 
-		auto test2 = GetBoneIndex(test, 2);
+		auto test2 = GetBoneIndex(test, 1);
 		printf("Scale3D %f,%f,%f\n", test2.Scale3D.X, test2.Scale3D.Y, test2.Scale3D.Z);
 		printf("Translation %f,%f,%f\n", test2.Translation.X, test2.Translation.Y, test2.Translation.Z);
 		printf("Rotation %f,%f,%f,%f\n", test2.Rotation.X, test2.Rotation.Y, test2.Rotation.Z, test2.Rotation.W);
