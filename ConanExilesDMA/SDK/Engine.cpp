@@ -132,7 +132,11 @@ void Engine::Cache()
 		//BP_NPC_Wildlife_Wight_1_C
 		//HumanoidNPCCharacter_Nordheimer_C
 		//BP_NPC_Wildlife_Wolf_NordheimerPet_C
-
+		//BP_NPC_Wildlife_Grey_Ape_C
+		//BP_NPC_Wildlife_Silverback_C
+		//BP_NPC_Wildlife_JungleBirdMiniboss_C
+		//BP_NPC_Wildlife_ReptileMonstrosity_C
+		//BP_NPC_Wildlife_JungleBird
 		if (name == "NULL")
 			continue;
 //		if (name != "BasePlayerChar_C")
@@ -171,6 +175,7 @@ void Engine::Cache()
 	{
 		if (actor->GetIsLocalPlayer())
 		{
+			if(actor && actor !=nullptr)
 			LocalPlayer.store(actor);
 			continue;
 		}

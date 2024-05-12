@@ -40,8 +40,16 @@ enum EntityType : int
 	Tiger,
 	Wight,
 	Wolf,
-	Player
-
+	Player,
+	Ape,
+	Silverback,
+	JungleBird,
+	JungleBirdBoss,
+	ReptileMonstrosity,
+	Komodo,
+	Panther,
+	Deer,
+	SandStormCreature
 
 
 };

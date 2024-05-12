@@ -42,7 +42,17 @@ inline std::unordered_map<EntityType, std::wstring> EntityIDNames = {
 		{EntityType::Wolf,LIT(L"Wolf")},
 		{EntityType::Crocodile,LIT(L"Crocodile")},
 		{EntityType::SnakeBoss,LIT(L"SnakeBoss")},
-		{EntityType::Player,LIT(L"Player")}
+		{EntityType::Player,LIT(L"Player")},
+		{EntityType::Ape,LIT(L"Ape")},
+		{EntityType::Silverback,LIT(L"Silverback")},
+		{EntityType::JungleBird,LIT(L"Jungle Bird")},
+		{EntityType::JungleBirdBoss,LIT(L"Jungle Bird Boss")},
+		{EntityType::ReptileMonstrosity,LIT(L"Reptile Monstrosity")},
+		{EntityType::Wight,LIT(L"Wight")},
+		{EntityType::Komodo,LIT(L"Komodo")},
+		{EntityType::Panther,LIT(L"Panther")},
+		{EntityType::Deer,LIT(L"Deer")},
+		{EntityType::SandStormCreature,LIT(L"Sand Storm Creature")}
 
 };
 
@@ -128,12 +138,36 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		EntityID = EntityType::Wight;
 	else if (name.substr(0, 20) == "BP_NPC_Wildlife_Wolf")
 		EntityID = EntityType::Wolf;
+	else if (name  == "BP_NPC_Wildlife_Grey_Ape_C")
+		EntityID = EntityType::Ape;
+	else if (name == "BP_NPC_Wildlife_Silverback_C")
+		EntityID = EntityType::Silverback;
+	else if (name.substr(0,36) == "BP_NPC_Wildlife_JungleBirdMiniboss_C")
+		EntityID = EntityType::JungleBirdBoss;
+	else if (name.substr(0, 34) == "BP_NPC_Wildlife_ReptileMonstrosity")
+		EntityID = EntityType::ReptileMonstrosity;
+	else if (name.substr(0, 26) == "BP_NPC_Wildlife_JungleBird")
+		EntityID = EntityType::JungleBird;
+	else if (name.substr(0, 29) == "BP_NPC_Wildlife_GreatScorpion")
+		EntityID = EntityType::Scorpion;
+	else if (name.substr(0, 22) == "BP_NPC_Wildlife_Komodo")
+		EntityID = EntityType::Komodo;
+	else if (name.substr(0, 20) == "BP_NPC_Wildlife_Deer")
+		EntityID = EntityType::Deer;
+	else if (name.substr(0, 23) == "BP_NPC_Wildlife_Panther")
+		EntityID = EntityType::Panther;
+	else if (name.substr(0, 34) == "BP_NPC_Wildlife_Sandstorm_Creature")
+		EntityID = EntityType::SandStormCreature;
+	else if (name.substr(0,21) == "BP_set_snake_jungle_C")
+		EntityID = EntityType::Snake;
 	else if(name == "BasePlayerChar_C")
 		EntityID = EntityType::Player;
-	if (EntityIDNames.contains(EntityID))
-		Name = EntityIDNames[EntityID];
-	else
-		return;
+
+
+		if (EntityIDNames.contains(EntityID))
+			Name = EntityIDNames[EntityID];
+		else
+			return;
 	if(!address)
 		return;
 	 TargetProcess.AddScatterReadRequest(handle,Class + PlayerState,reinterpret_cast<void*>(&PlayerState), sizeof(uint64_t));

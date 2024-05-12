@@ -63,7 +63,10 @@ Vector2 Camera::WorldToScreen(MinimalViewInfo viewinfo, Vector3 world)
 		viewinfo.FOV * FOV_DEG_TO_RAD)) / vTransformed.z;
 	Screenlocation.y = centrey - vTransformed.y * (centrex / tanf(
 		viewinfo.FOV * FOV_DEG_TO_RAD)) / vTransformed.z;
-
+	if (Screenlocation.x > Configs.Overlay.OverrideResolution ? Configs.Overlay.Width : GetSystemMetrics(SM_CXSCREEN))
+		return Vector2::Zero();
+	if (Screenlocation.y > Configs.Overlay.OverrideResolution ? Configs.Overlay.Height : GetSystemMetrics(SM_CYSCREEN))
+		return Vector2::Zero();
 	return Vector2(Screenlocation.x, Screenlocation.y);
 }
 
