@@ -31,7 +31,7 @@ void DrawPlayerEsp()
 		if (screenpos == Vector2::Zero())
 			continue;
 		Vector3 campos = Vector3(EngineInstance.load()->GetCameraCache().POV.Location.X, EngineInstance.load()->GetCameraCache().POV.Location.Y, EngineInstance.load()->GetCameraCache().POV.Location.Z);
-		float distance = (Vector3::Distance(campos, entity->GetPosition()) / 39.62f) - 6;
+		float distance = (Vector3::DistanceTo(campos,entity->GetPosition()) / 100.f) - 2;
 		if (distance < 0)
 			continue;
 		std::wstring wdistance = config.Distance ? L"[" + std::to_wstring((int)distance) + L"m]" : L"";

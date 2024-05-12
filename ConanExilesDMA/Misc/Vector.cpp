@@ -133,12 +133,7 @@ float Vector3::Distance(Vector3 a, Vector3 b)
 }
 float Vector3::DistanceTo(Vector3 a, Vector3 b)
 {
-    const auto difference = Vector3(
-        a.x - b.x,
-        a.y - b.y,
-        a.z - b.z);
-    
-    return difference.Length();
+    return (a - b).Length();
 }
 int Vector3::FormattedDistance(Vector3 a, Vector3 b)
 {
