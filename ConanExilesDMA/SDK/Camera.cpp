@@ -41,7 +41,7 @@ static ViewMatrix CreateMatrix(Vector3 rot, Vector3 origin) {
 
 Vector2 Camera::WorldToScreen(MinimalViewInfo viewinfo, Vector3 world)
 {
-	Vector3 Screenlocation(0, 0, 0);
+	Vector3 screen(0, 0, 0);
 	Vector3 rot = Vector3(viewinfo.Rotation.Pitch, viewinfo.Rotation.Yaw, viewinfo.Rotation.Roll);
 	Vector3 campos = Vector3(viewinfo.Location.X, viewinfo.Location.Y, viewinfo.Location.Z);
 	const ViewMatrix tempMatrix = CreateMatrix(rot, Vector3(0, 0, 0));
@@ -59,15 +59,17 @@ Vector2 Camera::WorldToScreen(MinimalViewInfo viewinfo, Vector3 world)
 	const float FOV_DEG_TO_RAD = static_cast<float>(3.14159265358979323846) / 360.f;
 	int centrex = Configs.Overlay.OverrideResolution ? Configs.Overlay.Width /2 : GetSystemMetrics(SM_CXSCREEN) / 2;
 	int centrey = Configs.Overlay.OverrideResolution ? Configs.Overlay.Height / 2 : GetSystemMetrics(SM_CYSCREEN) / 2;
-	Screenlocation.x = centrex + vTransformed.x * (centrex / tanf(
+	screen.x = centrex + vTransformed.x * (centrex / tanf(
 		viewinfo.FOV * FOV_DEG_TO_RAD)) / vTransformed.z;
-	Screenlocation.y = centrey - vTransformed.y * (centrex / tanf(
+	screen.y = centrey - vTransformed.y * (centrex / tanf(
 		viewinfo.FOV * FOV_DEG_TO_RAD)) / vTransformed.z;
-	if (Screenlocation.x > Configs.Overlay.OverrideResolution ? Configs.Overlay.Width : GetSystemMetrics(SM_CXSCREEN))
+	if(screen.x <0 || screen.y < 0)
 		return Vector2::Zero();
-	if (Screenlocation.y > Configs.Overlay.OverrideResolution ? Configs.Overlay.Height : GetSystemMetrics(SM_CYSCREEN))
-		return Vector2::Zero();
-	return Vector2(Screenlocation.x, Screenlocation.y);
+	int width = Configs.Overlay.OverrideResolution ? Configs.Overlay.Width : GetSystemMetrics(SM_CXSCREEN);
+	int height = Configs.Overlay.OverrideResolution ? Configs.Overlay.Height : GetSystemMetrics(SM_CYSCREEN);
+	if(screen.x > width || screen.y > height)
+				return Vector2::Zero();
+	return Vector2(screen.x, screen.y);
 }
 
 ViewMatrix Camera::ToMatrixWithScale(FTransform transform)

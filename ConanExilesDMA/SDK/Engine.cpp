@@ -4,6 +4,8 @@
 #include "Globals.h"
 #include <Camera.h>
 
+
+
 Engine::Engine()
 {
 	GWorld = TargetProcess.Read<uint64_t>(TargetProcess.GetBaseAddress(ProcessName) + GWorld);
@@ -184,7 +186,7 @@ void Engine::Cache()
 			players.push_back(actor);
 		}
 		else
-		{
+			{
 			others.push_back(actor);
 		}
 	}

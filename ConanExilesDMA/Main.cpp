@@ -46,6 +46,26 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
+std::shared_ptr<CheatFunction> Cache = std::make_shared<CheatFunction>(2000, [] {
+	if (!EngineInstance.load())
+	{
+		EngineInstance = std::make_shared<Engine>();
+		return;
+	}
+	if (EngineInstance.load()->GetActorCount() <= 0 || EngineInstance.load()->GetActorCount() > 5000)
+	{
+		EngineInstance = std::make_shared<Engine>();
+	}
+	EngineInstance.load()->Cache();
+	});
+void CachingThread()
+{
+	while (true)
+	{
+		Cache->Execute();
+		Sleep(10);
+	}
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -86,6 +106,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG msg;
 	SetProcessDPIAware();
 	SetInput();
+	std::thread cache(CachingThread);
+	cache.detach();
 	while (TRUE)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

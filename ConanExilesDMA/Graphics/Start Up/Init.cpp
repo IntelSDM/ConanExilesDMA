@@ -10,26 +10,6 @@ IDWriteFactory* FontFactory;
 ID2D1HwndRenderTarget* RenderTarget;
 ID2D1SolidColorBrush* Brush;
 
-std::shared_ptr<CheatFunction> Cache = std::make_shared<CheatFunction>(2000, [] {
-	if (!EngineInstance.load())
-	{
-		EngineInstance = std::make_shared<Engine>();
-		return;
-	}
-	if (EngineInstance.load()->GetActorCount() <= 0 || EngineInstance.load()->GetActorCount() > 5000)
-	{
-		EngineInstance = std::make_shared<Engine>();
-	}
-	EngineInstance.load()->Cache();
-	});
-void CachingThread()
-{
-	while (true)
-	{
-		Cache->Execute();
-		Sleep(10);
-	}
-}
 
 void InitD2D(HWND hWnd)
 {
@@ -48,8 +28,7 @@ void InitD2D(HWND hWnd)
 	CreateFonts("VerdanaBold", LIT(L"Verdana"), 10, DWRITE_FONT_WEIGHT_SEMI_BOLD);
 	RenderTarget->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0), &Brush); // create global brush
 	RenderTarget->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE); // set aa mode
-	std::thread cache(CachingThread);
-	cache.detach();
+	
 }
 
 void CleanD2D()

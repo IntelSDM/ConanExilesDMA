@@ -167,13 +167,19 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		if (EntityIDNames.contains(EntityID))
 			Name = EntityIDNames[EntityID];
 		else
-			return;
+			Name =  std::wstring(name.begin(),name.end());
 	if(!address)
 		return;
 	 TargetProcess.AddScatterReadRequest(handle,Class + PlayerState,reinterpret_cast<void*>(&PlayerState), sizeof(uint64_t));
 	 TargetProcess.AddScatterReadRequest(handle, Class + Controller, reinterpret_cast<void*>(&Controller), sizeof(uint64_t));
 	 TargetProcess.AddScatterReadRequest(handle, Class + RootComponent, reinterpret_cast<void*>(&RootComponent),sizeof(uint64_t));
 	 TargetProcess.AddScatterReadRequest(handle, Class + Mesh, reinterpret_cast<void*>(&Mesh), sizeof(uint64_t));
+	 if (EntityID == Player)
+	 {
+		
+		 TargetProcess.AddScatterReadRequest(handle, Class + CharacterNameOffset, reinterpret_cast<void*>(&CharacterName), sizeof(FString));
+		 TargetProcess.AddScatterReadRequest(handle, Class + PlayerNameOffset, reinterpret_cast<void*>(&PlayerName), sizeof(FString));
+	 }
 
 
 	
@@ -197,6 +203,8 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 		
 			if (Controller == EngineInstance.load()->GetPlayerController())
 			{
+				auto nameptr = TargetProcess.Read<FString>(Class + 0x1B68);
+				printf("Nameptr %s\n",nameptr.ToString().c_str());
 				//AcknowledgedPawn = TargetProcess.Read<uint64_t>(Controller + AcknowledgedPawn);
 				//uint64_t charactermovement = TargetProcess.Read<uint64_t>(AcknowledgedPawn + 0x0450);
 				// BasePlayerChar_C player is this // HeadVisible
@@ -205,7 +213,7 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 				//TargetProcess.Write<float>(charactermovement + 0x01F0, 10000);
 			}
 
-		}
+	}
 	
 	UEPosition = TargetProcess.Read<UEVector>(RootComponent + RelativeLocation);
 	Position = Vector3(UEPosition.X, UEPosition.Y, UEPosition.Z);
@@ -227,6 +235,7 @@ void ActorEntity::SetUp3()
 	{
 		
 		HeadBone = Camera::ResolveMatrix(HeadTransform, C2W);
+
 		
 	}
 }

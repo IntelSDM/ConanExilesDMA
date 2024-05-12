@@ -1,4 +1,5 @@
 #pragma once
+
 // ScriptStruct CoreUObject.Vector
 struct UEVector {
 	float X; // 0x0(0x4)
@@ -75,43 +76,22 @@ struct FakeTarray
     uint32_t m_nCount;
     uint32_t m_nMax;
 };
-
 struct FString : private TArray<wchar_t>
 {
-    wchar_t* buffer;
-    std::wstring str;
-
-    std::wstring ToWString()
+    std::wstring ToWString() const
     {
+
         wchar_t* buffer = new wchar_t[m_nCount + 1];
-        TargetProcess.Read(m_Data, buffer, m_nCount * sizeof(wchar_t));
+        TargetProcess.Read(m_Data, (uintptr_t*)buffer, m_nCount * sizeof(wchar_t));
         std::wstring ws(buffer);
         delete[] buffer;
 
         return ws;
     }
 
-    void QueueString(VMMDLL_SCATTER_HANDLE handle)
-    {
-        buffer = new wchar_t[m_nCount + 1];
-        TargetProcess.AddScatterReadRequest(handle, m_Data, buffer, m_nCount * sizeof(wchar_t));
-    }
-
-    std::wstring GetWString()
-    {
-        if (!str.empty())
-            return str;
-
-        std::wstring ws(buffer);
-        delete[] buffer;
-        return ws;
-    }
-
-    std::string ToString()
+    std::string ToString() const
     {
         std::wstring ws = ToWString();
-        std::string str(ws.begin(), ws.end());
-
-        return str;
+        return std::string(ws.begin(), ws.end());
     }
 };

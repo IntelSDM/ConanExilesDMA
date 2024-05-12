@@ -69,6 +69,10 @@ private:
 	uint64_t Mesh = 0x0448; // Character -> Mesh
 	uint64_t MasterPoseComponent = 0x07D8; // SkeletalMeshComponent -> MasterPoseComponent + 0x8
 	uint64_t ComponentToWorld = 0x1a0;  // // just guess this till you get a scale (1,1,1) and a roation with  0,0,-0.9998,-0.02
+	uint64_t CharacterNameOffset = 0x1B58; // BaseBPChar_C -> CharacterName
+	uint64_t PlayerNameOffset = 0x1B68; // BaseBPChar_C -> PlayerName
+	FString CharacterName;
+	FString PlayerName;
 	FTransform C2W;
 	FTransform HeadTransform;
 	std::wstring Name = LIT(L"Entity");
