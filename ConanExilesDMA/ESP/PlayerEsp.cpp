@@ -23,7 +23,7 @@ void DrawPlayerEsp()
 			continue;
 		PlayerConfig config = Configs.Survivor;
 
-		Vector2 screenpos = Camera::WorldToScreen(EngineInstance->GetCameraCache().POV, entity->GetPosition());
+		Vector2 screenpos = Camera::WorldToScreen(EngineInstance->GetCameraCache().POV, entity->BoneTest);
 		if (screenpos == Vector2::Zero())
 			continue;
 		Vector3 campos = Vector3(EngineInstance->GetCameraCache().POV.Location.X, EngineInstance->GetCameraCache().POV.Location.Y, EngineInstance->GetCameraCache().POV.Location.Z);

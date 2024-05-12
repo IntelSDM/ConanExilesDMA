@@ -23,7 +23,18 @@ struct CameraCacheEntry
 	char pad_4[0xc]; // 0x04(0x0c)
 	MinimalViewInfo POV; // 0x10(0x5e0)
 };
-
+struct FQuat {
+    float X; // float
+    float Y; // float
+    float Z; // float
+    float W; // float
+};
+struct FTransform {
+    FQuat Rotation;
+    UEVector Translation;
+    char pad[4];
+    UEVector Scale3D;
+};
 template <class T>
 class TArray
 {

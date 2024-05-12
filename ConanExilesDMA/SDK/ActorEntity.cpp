@@ -139,9 +139,85 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 	 TargetProcess.AddScatterReadRequest(handle,Class + PlayerState,reinterpret_cast<void*>(&PlayerState), sizeof(uint64_t));
 	 TargetProcess.AddScatterReadRequest(handle, Class + Controller, reinterpret_cast<void*>(&Controller), sizeof(uint64_t));
 	 TargetProcess.AddScatterReadRequest(handle, Class + RootComponent, reinterpret_cast<void*>(&RootComponent),sizeof(uint64_t));
+	 TargetProcess.AddScatterReadRequest(handle, Class + Mesh, reinterpret_cast<void*>(&Mesh), sizeof(uint64_t));
 
 
 	
+}
+inline FTransform GetBoneIndex(uint64_t array, uint64_t index) {
+	return TargetProcess.Read<FTransform>(array + (index * 0x30));
+}
+ViewMatrix ToMatrixWithScale(FTransform transform)
+{
+	ViewMatrix m;
+
+	m.matrix[3][0] = transform.Translation.X;
+	m.matrix[3][1] = transform.Translation.Y;
+	m.matrix[3][2] = transform.Translation.Z;
+
+	float x2 = transform.Rotation.X + transform.Rotation.X;
+	float y2 = transform.Rotation.Y + transform.Rotation.Y;
+	float z2 = transform.Rotation.Z + transform.Rotation.Z;
+
+	float xx2 = transform.Rotation.X * x2;
+	float yy2 = transform.Rotation.Y * y2;
+	float zz2 = transform.Rotation.Z * z2;
+	m.matrix[0][0] = (1.0f - (yy2 + zz2)) * transform.Scale3D.X;
+	m.matrix[1][1] = (1.0f - (xx2 + zz2)) * transform.Scale3D.Y;
+	m.matrix[2][2] = (1.0f - (xx2 + yy2)) * transform.Scale3D.Z;
+
+
+	float yz2 = transform.Rotation.Y * z2;
+	float wx2 = transform.Rotation.W * x2;
+	m.matrix[2][1] = (yz2 - wx2) * transform.Scale3D.Z;
+	m.matrix[1][2] = (yz2 + wx2) * transform.Scale3D.Y;
+
+
+	float xy2 = transform.Rotation.X * y2;
+	float wz2 = transform.Rotation.W * z2;
+	m.matrix[1][0] = (xy2 - wz2) * transform.Scale3D.Y;
+	m.matrix[0][1] = (xy2 + wz2) * transform.Scale3D.X;
+
+
+	float xz2 = transform.Rotation.X * z2;
+	float wy2 = transform.Rotation.W * y2;
+	m.matrix[2][0] = (xz2 + wy2) * transform.Scale3D.Z;
+	m.matrix[0][2] = (xz2 - wy2) * transform.Scale3D.X;
+
+	m.matrix[0][3] = 0.0f;
+	m.matrix[1][3] = 0.0f;
+	m.matrix[2][3] = 0.0f;
+	m.matrix[3][3] = 1.0f;
+
+	return m;
+}
+Vector3 ResolveMatrix(FTransform transform, FTransform c2w)
+{
+	ViewMatrix matrix; 
+	ViewMatrix bonematrix = ToMatrixWithScale(transform);
+	ViewMatrix c2wmatrix = ToMatrixWithScale(c2w);
+	matrix.matrix[0][0] = bonematrix.matrix[0][0] * c2wmatrix.matrix[0][0];
+	matrix.matrix[0][1] = bonematrix.matrix[0][1] * c2wmatrix.matrix[0][1];
+	matrix.matrix[0][2] = bonematrix.matrix[0][2] * c2wmatrix.matrix[0][2];
+	matrix.matrix[0][3] = bonematrix.matrix[0][3] * c2wmatrix.matrix[0][3];
+
+	matrix.matrix[1][0] = bonematrix.matrix[1][0] * c2wmatrix.matrix[1][0];
+	matrix.matrix[1][1] = bonematrix.matrix[1][1] * c2wmatrix.matrix[1][1];
+	matrix.matrix[1][2] = bonematrix.matrix[1][2] * c2wmatrix.matrix[1][2];
+	matrix.matrix[1][3] = bonematrix.matrix[1][3] * c2wmatrix.matrix[1][3];
+
+	matrix.matrix[2][0] = bonematrix.matrix[2][0] * c2wmatrix.matrix[2][0];
+	matrix.matrix[2][1] = bonematrix.matrix[2][1] * c2wmatrix.matrix[2][1];
+	matrix.matrix[2][2] = bonematrix.matrix[2][2] * c2wmatrix.matrix[2][2];
+	matrix.matrix[2][3] = bonematrix.matrix[2][3] * c2wmatrix.matrix[2][3];
+
+	matrix.matrix[3][0] = bonematrix.matrix[3][0] * c2wmatrix.matrix[3][0];
+	matrix.matrix[3][1] = bonematrix.matrix[3][1] * c2wmatrix.matrix[3][1];
+	matrix.matrix[3][2] = bonematrix.matrix[3][2] * c2wmatrix.matrix[3][2];
+	matrix.matrix[3][3] = bonematrix.matrix[3][3] * c2wmatrix.matrix[3][3];
+
+
+	return Vector3{ matrix.matrix[3][0],  matrix.matrix[3][1],  matrix.matrix[3][2] };
 }
 
 void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
@@ -152,13 +228,29 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 		return;
 	
 	if (EntityID == Player)
-	{
+	{// printf Mesh
+		//auto test2 = TargetProcess.Read<uint64_t>(Mesh + 0x0169);
+		auto ComponentToWorld = TargetProcess.Read<FTransform>(Mesh + 0x1a0); // just guess this till you get a scale (1,1,1) and a roation with  0,0,-0.9998,-0.02
+		printf("Scale3D %f,%f,%f\n", ComponentToWorld.Scale3D.X, ComponentToWorld.Scale3D.Y, ComponentToWorld.Scale3D.Z);
+		printf("Translation %f,%f,%f\n", ComponentToWorld.Translation.X, ComponentToWorld.Translation.Y, ComponentToWorld.Translation.Z);
+		printf("Rotation %f,%f,%f,%f\n", ComponentToWorld.Rotation.X, ComponentToWorld.Rotation.Y, ComponentToWorld.Rotation.Z, ComponentToWorld.Rotation.W);
+		auto test = TargetProcess.Read<uint64_t>(Mesh + MasterPoseComponent);
+		// printf test.length()
+
+		auto test2 = GetBoneIndex(test, 2);
+		printf("Scale3D %f,%f,%f\n", test2.Scale3D.X, test2.Scale3D.Y, test2.Scale3D.Z);
+		printf("Translation %f,%f,%f\n", test2.Translation.X, test2.Translation.Y, test2.Translation.Z);
+		printf("Rotation %f,%f,%f,%f\n", test2.Rotation.X, test2.Rotation.Y, test2.Rotation.Z, test2.Rotation.W);
+		BoneTest = ResolveMatrix(test2, ComponentToWorld);
+		printf("BoneTest %f,%f,%f\n", BoneTest.x, BoneTest.y, BoneTest.z);
+	//	printf("test2 %f,%f,%f\n", test2.Scale3D.X, test2.Scale3D.Y, test2.Scale3D.Z);
+
 		if (Controller == EngineInstance->GetPlayerController())
 		{
 			//AcknowledgedPawn = TargetProcess.Read<uint64_t>(Controller + AcknowledgedPawn);
 			//uint64_t charactermovement = TargetProcess.Read<uint64_t>(AcknowledgedPawn + 0x0450);
 			// BasePlayerChar_C player is this // HeadVisible
-			printf("Player is Local\n");
+		
 			//TargetProcess.Write<float>(Class + 0x0080, 3); // speedhack
 			//TargetProcess.Write<float>(charactermovement + 0x01F0, 10000);
 		}
