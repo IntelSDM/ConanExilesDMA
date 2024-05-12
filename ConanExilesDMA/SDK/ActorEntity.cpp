@@ -52,7 +52,8 @@ inline std::unordered_map<EntityType, std::wstring> EntityIDNames = {
 		{EntityType::Komodo,LIT(L"Komodo")},
 		{EntityType::Panther,LIT(L"Panther")},
 		{EntityType::Deer,LIT(L"Deer")},
-		{EntityType::SandStormCreature,LIT(L"Sand Storm Creature")}
+		{EntityType::SandStormCreature,LIT(L"Sand Storm Creature")},
+		{EntityType::Chest,LIT(L"Chest")}
 
 };
 
@@ -81,7 +82,10 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 	else if (name.substr(0, 23) == "BP_NPC_Wildlife_Vulture")
 		EntityID = EntityType::Vulture;
 	else if (name.substr(0, 29) == "BP_PL_CraftingStation_Furnace")
+	{
+		TargetProcess.Write<bool>(Class + 0x0789, false);
 		EntityID = EntityType::Furnace;
+	}
 	else if (name.substr(0, 27) == "BP_PL_CraftingStation_Armor")
 		EntityID = EntityType::Armorer;
 	else if (name.substr(0, 27) == "BP_PL_CraftingStation_Metal")
@@ -160,6 +164,16 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		EntityID = EntityType::SandStormCreature;
 	else if (name.substr(0,21) == "BP_set_snake_jungle_C")
 		EntityID = EntityType::Snake;
+	else if (name.substr(0, 11) == "BP_PL_Chest")
+	{
+		TargetProcess.Write<bool>(Class + 0x005C, false); // View locked contents
+		
+		EntityID = EntityType::Chest;
+	}
+	else if (name.substr(0,5) == "BP_PL")
+	{
+		TargetProcess.Write<bool>(Class + 0x0789, false); // View locked contents
+		}
 	else if(name == "BasePlayerChar_C")
 		EntityID = EntityType::Player;
 
@@ -185,10 +199,11 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 	
 }
 
-
+//MovementMode 0x01C4
 inline void GetBoneIndex(VMMDLL_SCATTER_HANDLE handle, FTransform& transform,uint64_t array, uint64_t index) {
 	TargetProcess.AddScatterReadRequest(handle,array + (index * 0x30),reinterpret_cast<void*>(&transform),sizeof(FTransform));
 }
+
 void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 {
 	if (!Class)
@@ -198,18 +213,25 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 	
 	if (EntityID == Player || EntityID == Humanoid)
 	{
+		if (EntityID == Player)
+		{
+			WCharacterName = CharacterName.ToWString();
+			WPlayerName = PlayerName.ToWString();
+		}
 		TargetProcess.AddScatterReadRequest(handle,Mesh + ComponentToWorld, reinterpret_cast<void*>(&C2W), sizeof(FTransform));
 		TargetProcess.AddScatterReadRequest(handle, Mesh + MasterPoseComponent,reinterpret_cast<void*>(&MasterPoseComponent),sizeof(uint64_t));
 		
 			if (Controller == EngineInstance.load()->GetPlayerController())
 			{
-				auto nameptr = TargetProcess.Read<FString>(Class + 0x1B68);
-				printf("Nameptr %s\n",nameptr.ToString().c_str());
-				//AcknowledgedPawn = TargetProcess.Read<uint64_t>(Controller + AcknowledgedPawn);
-				//uint64_t charactermovement = TargetProcess.Read<uint64_t>(AcknowledgedPawn + 0x0450);
+				//auto nameptr = TargetProcess.Read<FString>(Class + 0x1B68);
+				//printf("Nameptr %s\n",nameptr.ToString().c_str());
+			//	AcknowledgedPawn = TargetProcess.Read<uint64_t>(Controller + AcknowledgedPawn);
+			//	uint64_t charactermovement = TargetProcess.Read<uint64_t>(AcknowledgedPawn + 0x0450);
+			//	TargetProcess.Write<Vector3>(charactermovement + 0x010C, Vector3(1,1,1));
 				// BasePlayerChar_C player is this // HeadVisible
 				IsLocalPlayer = true;
 				TargetProcess.Write<float>(Class + 0x0080, 3); // speedhack
+		
 				//TargetProcess.Write<float>(charactermovement + 0x01F0, 10000);
 			}
 
@@ -296,4 +318,14 @@ Vector3 ActorEntity::GetHeadPosition()
 bool ActorEntity::GetIsLocalPlayer()
 {
 	return IsLocalPlayer;
+}
+
+std::wstring ActorEntity::GetCharacterName()
+{
+	return WCharacterName;
+}
+
+std::wstring ActorEntity::GetPlayerName()
+{
+	return WPlayerName;
 }

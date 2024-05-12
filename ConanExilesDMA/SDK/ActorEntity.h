@@ -49,7 +49,8 @@ enum EntityType : int
 	Komodo,
 	Panther,
 	Deer,
-	SandStormCreature
+	SandStormCreature,
+	Chest
 
 
 };
@@ -73,6 +74,8 @@ private:
 	uint64_t PlayerNameOffset = 0x1B68; // BaseBPChar_C -> PlayerName
 	FString CharacterName;
 	FString PlayerName;
+	std::wstring WCharacterName;
+	std::wstring WPlayerName;
 	FTransform C2W;
 	FTransform HeadTransform;
 	std::wstring Name = LIT(L"Entity");
@@ -96,5 +99,6 @@ public:
 	EntityType GetEntityID();
 	Vector3 GetHeadPosition();
 	bool GetIsLocalPlayer();
-
+	std::wstring GetCharacterName();
+	std::wstring GetPlayerName();
 };
