@@ -66,3 +66,66 @@ Vector2 Camera::WorldToScreen(MinimalViewInfo viewinfo, Vector3 world)
 
 	return Vector2(Screenlocation.x, Screenlocation.y);
 }
+
+ViewMatrix Camera::ToMatrixWithScale(FTransform transform)
+{
+	ViewMatrix m;
+
+	m.matrix[3][0] = transform.Translation.X;
+	m.matrix[3][1] = transform.Translation.Y;
+	m.matrix[3][2] = transform.Translation.Z;
+
+	float x2 = transform.Rotation.X + transform.Rotation.X;
+	float y2 = transform.Rotation.Y + transform.Rotation.Y;
+	float z2 = transform.Rotation.Z + transform.Rotation.Z;
+
+	float xx2 = transform.Rotation.X * x2;
+	float yy2 = transform.Rotation.Y * y2;
+	float zz2 = transform.Rotation.Z * z2;
+	m.matrix[0][0] = (1.0f - (yy2 + zz2)) * transform.Scale3D.X;
+	m.matrix[1][1] = (1.0f - (xx2 + zz2)) * transform.Scale3D.Y;
+	m.matrix[2][2] = (1.0f - (xx2 + yy2)) * transform.Scale3D.Z;
+
+
+	float yz2 = transform.Rotation.Y * z2;
+	float wx2 = transform.Rotation.W * x2;
+	m.matrix[2][1] = (yz2 - wx2) * transform.Scale3D.Z;
+	m.matrix[1][2] = (yz2 + wx2) * transform.Scale3D.Y;
+
+
+	float xy2 = transform.Rotation.X * y2;
+	float wz2 = transform.Rotation.W * z2;
+	m.matrix[1][0] = (xy2 - wz2) * transform.Scale3D.Y;
+	m.matrix[0][1] = (xy2 + wz2) * transform.Scale3D.X;
+
+
+	float xz2 = transform.Rotation.X * z2;
+	float wy2 = transform.Rotation.W * y2;
+	m.matrix[2][0] = (xz2 + wy2) * transform.Scale3D.Z;
+	m.matrix[0][2] = (xz2 - wy2) * transform.Scale3D.X;
+
+	m.matrix[0][3] = 0.0f;
+	m.matrix[1][3] = 0.0f;
+	m.matrix[2][3] = 0.0f;
+	m.matrix[3][3] = 1.0f;
+
+	return m;
+}
+Vector3 Camera::ResolveMatrix(FTransform transform, FTransform c2w)
+{
+	ViewMatrix matrix;
+	ViewMatrix bonematrix = ToMatrixWithScale(transform);
+	ViewMatrix c2wmatrix = ToMatrixWithScale(c2w);
+	int i, j, k;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
+			matrix.matrix[i][j] = 0;
+			for (k = 0; k < 4; k++) {
+				matrix.matrix[i][j] += bonematrix.matrix[i][k] * c2wmatrix.matrix[k][j];
+			}
+		}
+	}
+
+
+	return Vector3{ matrix.matrix[3][0],  matrix.matrix[3][1],  matrix.matrix[3][2] };
+}

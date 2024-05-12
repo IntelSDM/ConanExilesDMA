@@ -60,20 +60,27 @@ private:
 	uint64_t RelativeLocation = 0x01F0; // SceneComponent -> RelativeLocation
 	uint64_t Mesh = 0x0448; // Character -> Mesh
 	uint64_t MasterPoseComponent = 0x07D8; // SkeletalMeshComponent -> MasterPoseComponent + 0x8
-	
+	uint64_t ComponentToWorld = 0x1a0;  // // just guess this till you get a scale (1,1,1) and a roation with  0,0,-0.9998,-0.02
+	FTransform C2W;
+	FTransform HeadTransform;
 	std::wstring Name = LIT(L"Entity");
 	UEVector UEPosition;
 	Vector3 Position;
 	EntityType EntityID;
-	
+	Vector3 HeadBone;
 public:
-	Vector3 BoneTest;
+	
 	ActorEntity(uint64_t address,std::string name, VMMDLL_SCATTER_HANDLE handle);
 	void SetUp1(VMMDLL_SCATTER_HANDLE handle);
-	void SetUp2();
+	void SetUp2(VMMDLL_SCATTER_HANDLE handle);
+	void SetUp3();
+	void UpdateHeadPosition(VMMDLL_SCATTER_HANDLE handle);
+	void UpdateHeadPosition1();
 	uint64_t GetClass();
 	std::wstring GetName();
 	Vector3 GetPosition();
 	void UpdatePosition(VMMDLL_SCATTER_HANDLE handle);
+	EntityType GetEntityID();
+	Vector3 GetHeadPosition();
 
 };

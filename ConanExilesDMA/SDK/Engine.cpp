@@ -152,7 +152,17 @@ void Engine::Cache()
 	}
 	TargetProcess.ExecuteReadScatter(handle);
 	TargetProcess.CloseScatterHandle(handle);
-
+	handle = TargetProcess.CreateScatterHandle();
+	for (auto actor : actors)
+	{
+		actor->SetUp2(handle);
+	}
+	TargetProcess.ExecuteReadScatter(handle);
+	TargetProcess.CloseScatterHandle(handle);
+	for (auto actor : actors)
+	{
+		actor->SetUp3();
+	}
 	Players = actors;
 }
 
@@ -169,6 +179,11 @@ void Engine::UpdatePlayers()
 	}
 	TargetProcess.ExecuteReadScatter(handle);
 	TargetProcess.CloseScatterHandle(handle);
+	for (std::shared_ptr<ActorEntity> entity : Players)
+	{
+		entity->UpdateHeadPosition1();
+	}
+	
 }
 
 
