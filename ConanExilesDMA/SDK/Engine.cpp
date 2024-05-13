@@ -56,8 +56,10 @@ void Engine::Cache()
 	Actors = TargetProcess.Read<TArray<uint64_t>>(PersistentLevel + ActorsOffset);
 	ActorCount = Actors.Length();
 	printf("Actors: %i\n", Actors.Length());
-	if(ActorCount <= 0)
+	if (ActorCount <= 0 || ActorCount >= 10000)
+	{
 		return;
+	}
 	std::vector<uint64_t> entitylist;
 	entitylist.resize(Actors.Length());
 	std::unique_ptr<uint64_t[]> object_raw_ptr = std::make_unique<uint64_t[]>(Actors.Length());
@@ -176,6 +178,7 @@ void Engine::Cache()
 	std::vector<std::shared_ptr<ActorEntity>> players;
 	std::vector<std::shared_ptr<ActorEntity>> others;
 	std::vector<std::shared_ptr<ActorEntity>> animals;
+	std::vector<std::shared_ptr<ActorEntity>> buildings;
 	for (auto actor : actors)
 	{
 		if (actor->GetIsLocalPlayer())
@@ -192,6 +195,10 @@ void Engine::Cache()
 		{
 			animals.push_back(actor);
 		}
+		else if (actor->IsBuilding())
+		{
+			buildings.push_back(actor);
+		}
 		else
 			{
 			others.push_back(actor);
@@ -206,6 +213,9 @@ void Engine::Cache()
 	AnimalsMutex.lock();
 	Animals = animals;
 	AnimalsMutex.unlock();
+	BuildingsMutex.lock();
+	Buildings = buildings;
+	BuildingsMutex.unlock();
 }
 
 
@@ -265,6 +275,11 @@ int Engine::GetActorCount()
 std::vector<std::shared_ptr<ActorEntity>> Engine::GetAnimals()
 {
 	return Animals;
+}
+
+std::vector<std::shared_ptr<ActorEntity>> Engine::GetBuildings()
+{
+	return Buildings;
 }
 
 void Engine::UpdateAnimals()

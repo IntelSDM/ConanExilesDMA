@@ -52,7 +52,8 @@ enum EntityType : int
 	Deer,
 	SandStormCreature,
 	Chest,
-	Bear
+	Bear,
+	OtherBuildable
 
 
 };
@@ -89,6 +90,7 @@ private:
 	
 public:
 	bool IsAnimal();
+	bool IsBuilding();
 	ActorEntity(uint64_t address,std::string name, VMMDLL_SCATTER_HANDLE handle);
 	void SetUp1(VMMDLL_SCATTER_HANDLE handle);
 	void SetUp2(VMMDLL_SCATTER_HANDLE handle);

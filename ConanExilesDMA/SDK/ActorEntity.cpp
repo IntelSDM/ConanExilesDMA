@@ -98,6 +98,21 @@ bool ActorEntity::IsAnimal()
 	return false;
 
 }
+bool ActorEntity::IsBuilding()
+{
+	if (EntityID == EntityType::Furnace ||
+				EntityID == EntityType::Armorer ||
+				EntityID == EntityType::MetalSmith ||
+				EntityID == EntityType::LandClaim ||
+				EntityID == EntityType::Foundation ||
+				EntityID == EntityType::Tanner ||
+				EntityID == EntityType::Bedroll ||
+				EntityID == EntityType::Alchemist ||
+				EntityID == EntityType::Chest ||
+		EntityID == EntityType::OtherBuildable)
+		return true;
+	return false;
+}
 ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE handle)
 {
 	Class = address;
@@ -216,6 +231,7 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 	else if (name.substr(0,5) == "BP_PL")
 	{
 		TargetProcess.Write<bool>(Class + 0x0789, false); // View locked contents
+		EntityID = EntityType::OtherBuildable;
 		}
 	else if(name == "BasePlayerChar_C")
 		EntityID = EntityType::Player;

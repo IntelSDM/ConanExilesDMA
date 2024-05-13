@@ -24,12 +24,14 @@ private:
 	std::vector<std::shared_ptr<ActorEntity>> Players;
 	std::vector<std::shared_ptr<ActorEntity>> OtherActors;
 	std::vector<std::shared_ptr<ActorEntity>> Animals;
+	std::vector<std::shared_ptr<ActorEntity>> Buildings;
 	int ActorCount = 0;
 public:
 	std::atomic<std::shared_ptr<ActorEntity>> LocalPlayer;
 	std::mutex PlayersMutex;
 	std::mutex OtherActorsMutex;
 	std::mutex AnimalsMutex;
+	std::mutex BuildingsMutex;
 	Engine();
 	void Cache();
 	void UpdatePlayers();
@@ -38,6 +40,7 @@ public:
 	std::vector<std::shared_ptr<ActorEntity>> GetPlayers();
 	std::vector<std::shared_ptr<ActorEntity>> GetOtherActors();
 	std::vector<std::shared_ptr<ActorEntity>> GetAnimals();
+	std::vector<std::shared_ptr<ActorEntity>> GetBuildings();
 	CameraCacheEntry GetCameraCache();
 	void RefreshViewMatrix(VMMDLL_SCATTER_HANDLE handle);
 	std::string GetNameById(uint32_t actor_id);

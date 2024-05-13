@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "PlayerEsp.h"
 #include "AnimalEsp.h"
+#include "BuildingEsp.h"
 ID2D1Factory* Factory;
 IDWriteFactory* FontFactory;
 ID2D1HwndRenderTarget* RenderTarget;
@@ -97,15 +98,22 @@ std::shared_ptr<CheatFunction> UpdateViewMatrix = std::make_shared<CheatFunction
 
 void RenderFrame()
 {
-
+	if (EngineInstance.load())
+	{
+		if (EngineInstance.load()->GetActorCount() <= 0 || EngineInstance.load()->GetActorCount() > 5000)
+		{
+			EngineInstance = std::make_shared<Engine>();
+		}
+	}
 	UpdateViewMatrix->Execute();
 	UpdatePlayers->Execute();
 	UpdateAnimals->Execute();
 	RenderTarget->BeginDraw();
 	RenderTarget->Clear(Colour(0, 0, 0, 255)); // clear over the last buffer
 	RenderTarget->SetTransform(D2D1::Matrix3x2F::Identity()); // set new transform
-	DrawPlayerEsp();
+	DrawBuildingEsp();
 	DrawAnimalEsp();
+	DrawPlayerEsp();
 //	Render();
 	RenderTarget->EndDraw();
 }

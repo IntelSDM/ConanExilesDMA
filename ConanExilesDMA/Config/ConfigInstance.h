@@ -3,6 +3,7 @@
 #include "PlayerConfig.h"
 #include "Overlay.h"
 #include "AnimalConfig.h"
+#include "BuildableConfig.h"
 class ConfigInstances
 {
 public:
@@ -49,6 +50,18 @@ public:
 	AnimalConfig RockNoseBoss = AnimalConfig(LIT("RockNoseBoss"));
 	AnimalConfig Bear = AnimalConfig(LIT("Bear"));
 
+	BuildableConfig Furnace = BuildableConfig(LIT("Furnace"));	
+	BuildableConfig Armorer = BuildableConfig(LIT("Armorer"));
+	BuildableConfig MetalSmith = BuildableConfig(LIT("MetalSmith"));
+	BuildableConfig LandClaim = BuildableConfig(LIT("LandClaim"));
+	BuildableConfig Foundation = BuildableConfig(LIT("Foundation"));
+	BuildableConfig Tanner = BuildableConfig(LIT("Tanner"));
+	BuildableConfig Bedroll = BuildableConfig(LIT("Bedroll"));
+	BuildableConfig Alchemist = BuildableConfig(LIT("Alchemist"));
+	BuildableConfig Chest = BuildableConfig(LIT("Chest"));
+	BuildableConfig OtherBuildable = BuildableConfig(LIT("OtherBuildable"));
+
+
 	json ToJson()
 	{
 		json jsoned;
@@ -94,6 +107,16 @@ public:
 		jsoned.merge_patch(SandStormCreature.ToJson());
 		jsoned.merge_patch(RockNoseBoss.ToJson());
 		jsoned.merge_patch(Bear.ToJson());
+		jsoned.merge_patch(Furnace.ToJson());
+		jsoned.merge_patch(Armorer.ToJson());
+		jsoned.merge_patch(MetalSmith.ToJson());
+		jsoned.merge_patch(LandClaim.ToJson());
+		jsoned.merge_patch(Foundation.ToJson());
+		jsoned.merge_patch(Tanner.ToJson());
+		jsoned.merge_patch(Bedroll.ToJson());
+		jsoned.merge_patch(Alchemist.ToJson());
+		jsoned.merge_patch(Chest.ToJson());
+
 
 		return jsoned;
 	}
@@ -142,6 +165,16 @@ public:
 		SandStormCreature.FromJson(jsoned);
 		RockNoseBoss.FromJson(jsoned);
 		Bear.FromJson(jsoned);
+		Furnace.FromJson(jsoned);
+		Armorer.FromJson(jsoned);
+		MetalSmith.FromJson(jsoned);
+		LandClaim.FromJson(jsoned);
+		Foundation.FromJson(jsoned);
+		Tanner.FromJson(jsoned);
+		Bedroll.FromJson(jsoned);
+		Alchemist.FromJson(jsoned);
+		Chest.FromJson(jsoned);
+
 
 	}
 };
