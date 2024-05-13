@@ -5,6 +5,7 @@
 #include "AnimalConfig.h"
 #include "BuildableConfig.h"
 #include "OtherEspConfig.h"
+#include "AimbotConfig.h"
 class ConfigInstances
 {
 public:
@@ -64,6 +65,7 @@ public:
 
 	OtherEspConfig OtherEsp = OtherEspConfig(LIT("OtherEsp"));
 
+	AimbotConfig Aimbot = AimbotConfig(LIT("Aimbot"));
 	json ToJson()
 	{
 		json jsoned;
@@ -120,6 +122,7 @@ public:
 		jsoned.merge_patch(Chest.ToJson());
 		jsoned.merge_patch(OtherBuildable.ToJson());
 		jsoned.merge_patch(OtherEsp.ToJson());
+		jsoned.merge_patch(Aimbot.ToJson());
 
 
 		return jsoned;
@@ -180,6 +183,7 @@ public:
 		Chest.FromJson(jsoned);
 		OtherBuildable.FromJson(jsoned);
 		OtherEsp.FromJson(jsoned);
+		Aimbot.FromJson(jsoned);
 
 
 	}

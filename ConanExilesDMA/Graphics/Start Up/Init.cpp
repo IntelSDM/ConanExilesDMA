@@ -8,6 +8,9 @@
 #include "AnimalEsp.h"
 #include "BuildingEsp.h"
 #include "OtherEsp.h"
+#include "Aimbot.h"
+#include "InputManager.h"
+#include "kmbox.h"
 ID2D1Factory* Factory;
 IDWriteFactory* FontFactory;
 ID2D1HwndRenderTarget* RenderTarget;
@@ -31,7 +34,8 @@ void InitD2D(HWND hWnd)
 	CreateFonts("VerdanaBold", LIT(L"Verdana"), 10, DWRITE_FONT_WEIGHT_SEMI_BOLD);
 	RenderTarget->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0), &Brush); // create global brush
 	RenderTarget->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE); // set aa mode
-	
+	Keyboard::InitKeyboard();
+	kmbox::KmboxInitialize("");
 }
 
 void CleanD2D()
@@ -113,6 +117,7 @@ void RenderFrame()
 	RenderTarget->BeginDraw();
 	RenderTarget->Clear(Colour(0, 0, 0, 255)); // clear over the last buffer
 	RenderTarget->SetTransform(D2D1::Matrix3x2F::Identity()); // set new transform
+	Aimbot();
 	DrawOtherEsp();
 	DrawBuildingEsp();
 	DrawAnimalEsp();
