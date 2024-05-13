@@ -119,6 +119,7 @@ public:
 		jsoned.merge_patch(Alchemist.ToJson());
 		jsoned.merge_patch(Chest.ToJson());
 		jsoned.merge_patch(OtherBuildable.ToJson());
+		jsoned.merge_patch(OtherEsp.ToJson());
 
 
 		return jsoned;
@@ -178,6 +179,7 @@ public:
 		Alchemist.FromJson(jsoned);
 		Chest.FromJson(jsoned);
 		OtherBuildable.FromJson(jsoned);
+		OtherEsp.FromJson(jsoned);
 
 
 	}

@@ -9,6 +9,7 @@ public:
 	{
 		ConfigName = name;
 	}
+    bool Enabled = true;
     bool Name = true;
     int NameType = 0;
     bool Distance = true;
@@ -40,6 +41,7 @@ public:
     json ToJson()
     {
         json j;
+        j[ConfigName][LIT("Enabled")] = Enabled;
         j[ConfigName][LIT("Name")] = Name;
         j[ConfigName][LIT("Box")] = Box;
         j[ConfigName][LIT("NameType")] = NameType;
@@ -55,6 +57,8 @@ public:
     {
         if (!j.contains(ConfigName))
             return;
+        if (j[ConfigName].contains(LIT("Enabled")))
+            Enabled = j[ConfigName][LIT("Enabled")];
         if (j[ConfigName].contains(LIT("Name")))
             Name = j[ConfigName][LIT("Name")];
         if (j[ConfigName].contains(LIT("Distance")))

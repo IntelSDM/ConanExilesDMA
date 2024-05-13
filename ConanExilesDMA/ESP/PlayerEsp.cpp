@@ -26,8 +26,11 @@ void DrawPlayerEsp()
 		if (entity->GetPosition() == Vector3(0, 0, 0))
 			continue;
 		PlayerConfig config = Configs.Player;
+
 		if (entity->GetEntityID() == Humanoid)
 			config = Configs.Humanoid;
+		if (!config.Enabled)
+			continue;
 		Vector2 screenpos = Camera::WorldToScreen(EngineInstance.load()->GetCameraCache().POV, entity->GetPosition());
 		if (screenpos == Vector2::Zero())
 			continue;
@@ -39,6 +42,8 @@ void DrawPlayerEsp()
 		std::wstring name = config.Name ? entity->GetName() : L"";
 		if (entity->GetEntityID() == Player)
 		name = config.Name ? config.NameType == 0 ? entity->GetCharacterName() : entity->GetPlayerName() : L"";
+		if (name.length() > 20)
+			name = LIT(L"Player");
 
 		if (distance > config.MaxDistance)
 			continue;

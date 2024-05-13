@@ -116,6 +116,6 @@ void RenderFrame()
 	DrawBuildingEsp();
 	DrawAnimalEsp();
 	DrawPlayerEsp();
-//	Render();
+	Render();
 	RenderTarget->EndDraw();
 }

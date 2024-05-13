@@ -50,6 +50,8 @@ void DrawBuildingEsp()
 		if (entity->GetPosition() == Vector3(0, 0, 0))
 			continue;
 		BuildableConfig config = GetConfig(entity->GetEntityID());
+		if (!config.Enabled)
+			continue;
 		Vector2 screenpos = Camera::WorldToScreen(EngineInstance.load()->GetCameraCache().POV, entity->GetPosition());
 		if (screenpos == Vector2::Zero())
 			continue;

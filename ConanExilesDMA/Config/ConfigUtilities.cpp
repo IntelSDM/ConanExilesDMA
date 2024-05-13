@@ -8,7 +8,7 @@ ConfigInstances Configs;
 
 void SetUpConfig()
 {
-    std::filesystem::path filePath = std::filesystem::path(getenv(LIT("USERPROFILE"))) / LIT("Documents") / LIT("Hunt") / (LIT("Default.json"));
+    std::filesystem::path filePath = std::filesystem::path(getenv(LIT("USERPROFILE"))) / LIT("Documents") / LIT("Conan") / (LIT("Default.json"));
     std::filesystem::create_directories(filePath.parent_path());
     std::filesystem::exists(filePath) ? LoadConfig(LIT(L"Default")) : SaveConfig(LIT(L"Default"));
 }
@@ -19,7 +19,7 @@ void SaveConfig(const std::wstring& config)
     Config = Configs.ToJson();
     std::string jsonstring = Config.dump() + "\n";
 
-    std::filesystem::path filePath = std::filesystem::path(getenv(LIT("USERPROFILE"))) / LIT("Documents") / LIT("Hunt") / (cfg + LIT(".json"));
+    std::filesystem::path filePath = std::filesystem::path(getenv(LIT("USERPROFILE"))) / LIT("Documents") / LIT("Conan") / (cfg + LIT(".json"));
 
     std::filesystem::create_directories(filePath.parent_path());
 
@@ -35,7 +35,7 @@ void LoadConfig(const std::wstring& config)
 {
     std::string cfg(config.begin(), config.end());
 
-    std::filesystem::path filePath = std::filesystem::path(getenv(LIT("USERPROFILE"))) / LIT("Documents") / LIT("Hunt") / (cfg + LIT(".json"));
+    std::filesystem::path filePath = std::filesystem::path(getenv(LIT("USERPROFILE"))) / LIT("Documents") / LIT("Conan") / (cfg + LIT(".json"));
 
     if (!std::filesystem::exists(filePath)) {
         return;

@@ -9,6 +9,7 @@ public:
     {
         ConfigName = name;
     }
+    bool Enabled = false;
     bool Name = true;
     bool Distance = true;
     int MaxDistance = 1000;
@@ -37,6 +38,7 @@ public:
     json ToJson()
     {
         json j;
+        j[ConfigName][LIT("Enabled")] = Enabled;
         j[ConfigName][LIT("Name")] = Name;
         j[ConfigName][LIT("Distance")] = Distance;
         j[ConfigName][LIT("FontSize")] = FontSize;
@@ -49,6 +51,8 @@ public:
     {
         if (!j.contains(ConfigName))
             return;
+        if (j[ConfigName].contains(LIT("Enabled")))
+            Enabled = j[ConfigName][LIT("Enabled")];
         if (j[ConfigName].contains(LIT("Name")))
             Name = j[ConfigName][LIT("Name")];
         if (j[ConfigName].contains(LIT("Distance")))
