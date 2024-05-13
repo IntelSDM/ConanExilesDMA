@@ -55,7 +55,9 @@ void DrawPlayerEsp()
 				continue;
 			float height = Vector2::Distance(screenpos, headscreenpos);
 			float width = height / 2;
-			if (entity->GetHeadPosition().y <= entity->GetHeadPosition().y)
+			if (entity->GetHeadPosition().z <= entity->GetPosition().z + 5)
+				continue;
+			if (height > 250)
 				continue;
 				
 			OutlineRectangle(screenpos.x - (width/2), headscreenpos.y - 7, width, height, 2, config.BoxColour);

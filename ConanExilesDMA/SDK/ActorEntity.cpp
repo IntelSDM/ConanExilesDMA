@@ -57,7 +57,47 @@ inline std::unordered_map<EntityType, std::wstring> EntityIDNames = {
 		{EntityType::Bear,LIT(L"Bear")}
 
 };
+bool ActorEntity::IsAnimal()
+{
+	if (EntityID == EntityType::Imp ||
+				EntityID == EntityType::Kappa ||
+				EntityID == EntityType::Crocodile ||
+				EntityID == EntityType::Rabbit ||
+				EntityID == EntityType::Hyena ||
+				EntityID == EntityType::Vulture ||
+				EntityID == EntityType::Gazelle ||
+				EntityID == EntityType::Kudo ||
+				EntityID == EntityType::Fawn ||
+				EntityID == EntityType::HyenaBoss ||
+				EntityID == EntityType::Spider ||
+				EntityID == EntityType::Slamander ||
+				EntityID == EntityType::Scorpion ||
+				EntityID == EntityType::ScorpionBoss ||
+				EntityID == EntityType::Snake ||
+				EntityID == EntityType::SnakeBoss ||
+				EntityID == EntityType::Antilope ||
+				EntityID == EntityType::RhinoKing ||
+				EntityID == EntityType::Rhino ||
+				EntityID == EntityType::RockNoseBoss ||
+				EntityID == EntityType::Locust ||
+				EntityID == EntityType::Jaguar ||
+				EntityID == EntityType::Tiger ||
+				EntityID == EntityType::Wight ||
+				EntityID == EntityType::Wolf ||
+				EntityID == EntityType::Ape ||
+				EntityID == EntityType::Silverback ||
+				EntityID == EntityType::JungleBird ||
+				EntityID == EntityType::JungleBirdBoss ||
+				EntityID == EntityType::ReptileMonstrosity ||
+				EntityID == EntityType::Komodo ||
+				EntityID == EntityType::Panther ||
+				EntityID == EntityType::Deer ||
+				EntityID == EntityType::SandStormCreature ||
+				EntityID == EntityType::Bear)
+		return true;
+	return false;
 
+}
 ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE handle)
 {
 	Class = address;
@@ -332,3 +372,5 @@ std::wstring ActorEntity::GetPlayerName()
 {
 	return WPlayerName;
 }
+
+

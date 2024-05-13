@@ -175,6 +175,7 @@ void Engine::Cache()
 
 	std::vector<std::shared_ptr<ActorEntity>> players;
 	std::vector<std::shared_ptr<ActorEntity>> others;
+	std::vector<std::shared_ptr<ActorEntity>> animals;
 	for (auto actor : actors)
 	{
 		if (actor->GetIsLocalPlayer())
@@ -187,6 +188,10 @@ void Engine::Cache()
 		{
 			players.push_back(actor);
 		}
+		else if (actor->IsAnimal())
+		{
+			animals.push_back(actor);
+		}
 		else
 			{
 			others.push_back(actor);
@@ -198,6 +203,9 @@ void Engine::Cache()
 	OtherActorsMutex.lock();
 	OtherActors = others;
 	OtherActorsMutex.unlock();
+	AnimalsMutex.lock();
+	Animals = animals;
+	AnimalsMutex.unlock();
 }
 
 
@@ -252,4 +260,22 @@ uint64_t Engine::GetPlayerController()
 int Engine::GetActorCount()
 {
 	return ActorCount;
+}
+
+std::vector<std::shared_ptr<ActorEntity>> Engine::GetAnimals()
+{
+	return Animals;
+}
+
+void Engine::UpdateAnimals()
+{
+	AnimalsMutex.lock();
+	auto handle = TargetProcess.CreateScatterHandle();
+	for (std::shared_ptr<ActorEntity> entity : Animals)
+	{
+		entity->UpdatePosition(handle);
+	}
+	AnimalsMutex.unlock();
+	TargetProcess.ExecuteReadScatter(handle);
+	TargetProcess.CloseScatterHandle(handle);
 }

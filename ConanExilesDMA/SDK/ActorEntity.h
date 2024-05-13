@@ -1,5 +1,6 @@
 #pragma once
 #include "EngineStructs.h"
+
 enum EntityType : int
 {
 	Imp,
@@ -85,8 +86,9 @@ private:
 	EntityType EntityID;
 	Vector3 HeadBone;
 	bool IsLocalPlayer = false;
-public:
 	
+public:
+	bool IsAnimal();
 	ActorEntity(uint64_t address,std::string name, VMMDLL_SCATTER_HANDLE handle);
 	void SetUp1(VMMDLL_SCATTER_HANDLE handle);
 	void SetUp2(VMMDLL_SCATTER_HANDLE handle);

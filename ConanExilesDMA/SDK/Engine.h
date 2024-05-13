@@ -23,16 +23,21 @@ private:
 	MinimalViewInfo CameraViewInfo; // ScriptStruct Engine.MinimalViewInfo
 	std::vector<std::shared_ptr<ActorEntity>> Players;
 	std::vector<std::shared_ptr<ActorEntity>> OtherActors;
+	std::vector<std::shared_ptr<ActorEntity>> Animals;
 	int ActorCount = 0;
 public:
 	std::atomic<std::shared_ptr<ActorEntity>> LocalPlayer;
 	std::mutex PlayersMutex;
 	std::mutex OtherActorsMutex;
+	std::mutex AnimalsMutex;
 	Engine();
 	void Cache();
 	void UpdatePlayers();
+	void UpdateAnimals();
+
 	std::vector<std::shared_ptr<ActorEntity>> GetPlayers();
 	std::vector<std::shared_ptr<ActorEntity>> GetOtherActors();
+	std::vector<std::shared_ptr<ActorEntity>> GetAnimals();
 	CameraCacheEntry GetCameraCache();
 	void RefreshViewMatrix(VMMDLL_SCATTER_HANDLE handle);
 	std::string GetNameById(uint32_t actor_id);
