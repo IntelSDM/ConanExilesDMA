@@ -104,6 +104,7 @@ void RenderFrame()
 		if (EngineInstance.load()->GetActorCount() <= 0 || EngineInstance.load()->GetActorCount() > 5000)
 		{
 			EngineInstance = std::make_shared<Engine>();
+			EngineInstance.load()->Cache();
 		}
 	}
 	UpdateViewMatrix->Execute();
