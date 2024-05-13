@@ -50,7 +50,8 @@ enum EntityType : int
 	Panther,
 	Deer,
 	SandStormCreature,
-	Chest
+	Chest,
+	Bear
 
 
 };

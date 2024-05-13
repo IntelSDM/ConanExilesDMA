@@ -25,8 +25,9 @@ void DrawPlayerEsp()
 	{
 		if (entity->GetPosition() == Vector3(0, 0, 0))
 			continue;
-		PlayerConfig config = Configs.Survivor;
-	
+		PlayerConfig config = Configs.Player;
+		if (entity->GetEntityID() == Humanoid)
+			config = Configs.Humanoid;
 		Vector2 screenpos = Camera::WorldToScreen(EngineInstance.load()->GetCameraCache().POV, entity->GetPosition());
 		if (screenpos == Vector2::Zero())
 			continue;
@@ -36,8 +37,9 @@ void DrawPlayerEsp()
 			continue;
 		std::wstring wdistance = config.Distance ? L"[" + std::to_wstring((int)distance) + L"m]" : L"";
 		std::wstring name = config.Name ? entity->GetName() : L"";
-		if(entity->GetEntityID() == Player)
+		if (entity->GetEntityID() == Player)
 		name = config.Name ? config.NameType == 0 ? entity->GetCharacterName() : entity->GetPlayerName() : L"";
+
 		if (distance > config.MaxDistance)
 			continue;
 		DrawText(screenpos.x, screenpos.y, name + wdistance, "Verdana", config.FontSize, config.TextColour, CentreCentre);
@@ -53,6 +55,9 @@ void DrawPlayerEsp()
 				continue;
 			float height = Vector2::Distance(screenpos, headscreenpos);
 			float width = height / 2;
+			if (entity->GetHeadPosition().y <= entity->GetHeadPosition().y)
+				continue;
+				
 			OutlineRectangle(screenpos.x - (width/2), headscreenpos.y - 7, width, height, 2, config.BoxColour);
 		}
 	}

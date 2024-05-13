@@ -53,7 +53,8 @@ inline std::unordered_map<EntityType, std::wstring> EntityIDNames = {
 		{EntityType::Panther,LIT(L"Panther")},
 		{EntityType::Deer,LIT(L"Deer")},
 		{EntityType::SandStormCreature,LIT(L"Sand Storm Creature")},
-		{EntityType::Chest,LIT(L"Chest")}
+		{EntityType::Chest,LIT(L"Chest")},
+		{EntityType::Bear,LIT(L"Bear")}
 
 };
 
@@ -164,6 +165,8 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		EntityID = EntityType::SandStormCreature;
 	else if (name.substr(0,21) == "BP_set_snake_jungle_C")
 		EntityID = EntityType::Snake;
+	else if (name.substr(0, 11) == "BP_NPC_Wildlife_Bear")
+		EntityID = EntityType::Bear;
 	else if (name.substr(0, 11) == "BP_PL_Chest")
 	{
 		TargetProcess.Write<bool>(Class + 0x005C, false); // View locked contents
