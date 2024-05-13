@@ -120,6 +120,9 @@
     <ClCompile Include="ESP\BuildingEsp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ESP\OtherEsp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Misc\Pch\Pch.h">
@@ -252,6 +255,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ESP\BuildingEsp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ESP\OtherEsp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\OtherEspConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

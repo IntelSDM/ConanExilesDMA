@@ -4,6 +4,7 @@
 #include "Overlay.h"
 #include "AnimalConfig.h"
 #include "BuildableConfig.h"
+#include "OtherEspConfig.h"
 class ConfigInstances
 {
 public:
@@ -61,6 +62,7 @@ public:
 	BuildableConfig Chest = BuildableConfig(LIT("Chest"));
 	BuildableConfig OtherBuildable = BuildableConfig(LIT("OtherBuildable"));
 
+	OtherEspConfig OtherEsp = OtherEspConfig(LIT("OtherEsp"));
 
 	json ToJson()
 	{
@@ -116,6 +118,7 @@ public:
 		jsoned.merge_patch(Bedroll.ToJson());
 		jsoned.merge_patch(Alchemist.ToJson());
 		jsoned.merge_patch(Chest.ToJson());
+		jsoned.merge_patch(OtherBuildable.ToJson());
 
 
 		return jsoned;
@@ -174,6 +177,7 @@ public:
 		Bedroll.FromJson(jsoned);
 		Alchemist.FromJson(jsoned);
 		Chest.FromJson(jsoned);
+		OtherBuildable.FromJson(jsoned);
 
 
 	}

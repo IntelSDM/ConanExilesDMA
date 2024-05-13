@@ -7,6 +7,7 @@
 #include "PlayerEsp.h"
 #include "AnimalEsp.h"
 #include "BuildingEsp.h"
+#include "OtherEsp.h"
 ID2D1Factory* Factory;
 IDWriteFactory* FontFactory;
 ID2D1HwndRenderTarget* RenderTarget;
@@ -111,6 +112,7 @@ void RenderFrame()
 	RenderTarget->BeginDraw();
 	RenderTarget->Clear(Colour(0, 0, 0, 255)); // clear over the last buffer
 	RenderTarget->SetTransform(D2D1::Matrix3x2F::Identity()); // set new transform
+	DrawOtherEsp();
 	DrawBuildingEsp();
 	DrawAnimalEsp();
 	DrawPlayerEsp();
