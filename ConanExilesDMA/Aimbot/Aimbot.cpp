@@ -10,13 +10,20 @@
 #include "InputManager.h"
 #include "Camera.h"
 
-
+void AimbotDrawing()
+{
+	Vector2 centreofscreen = Vector2(Configs.Overlay.OverrideResolution ? Configs.Overlay.Width / 2 : GetSystemMetrics(SM_CXSCREEN) / 2, Configs.Overlay.OverrideResolution ? Configs.Overlay.Height /2 : GetSystemMetrics(SM_CYSCREEN) /2);
+	if (Configs.Aimbot.DrawFOV)
+	{
+		OutlineCircle(centreofscreen.x, centreofscreen.y, Configs.Aimbot.FOV,2, Configs.Aimbot.FOVColour);
+	}
+}
 int ConditionalSwapPlayer(std::vector<std::shared_ptr<ActorEntity>>& entities, int low, int high)
 {
 	Vector3 campos = Vector3(EngineInstance.load()->GetCameraCache().POV.Location.X, EngineInstance.load()->GetCameraCache().POV.Location.Y, EngineInstance.load()->GetCameraCache().POV.Location.Z);
 	std::shared_ptr<ActorEntity> pivot = entities[high];
 	int i = low - 1;
-	Vector2 centreofscreen = Vector2(Configs.Overlay.OverrideResolution ? Configs.Overlay.Width / 2 : GetSystemMetrics(SM_CXSCREEN) / 2, Configs.Overlay.OverrideResolution ? Configs.Overlay.Height * 0.6f : GetSystemMetrics(SM_CYSCREEN) * 0.6f);
+	Vector2 centreofscreen = Vector2(Configs.Overlay.OverrideResolution ? Configs.Overlay.Width / 2 : GetSystemMetrics(SM_CXSCREEN) / 2, Configs.Overlay.OverrideResolution ? Configs.Overlay.Height /2 : GetSystemMetrics(SM_CYSCREEN) /2);
 	for (int j = low; j < high; ++j)
 	{
 		if (Configs.Aimbot.Priority == 2)
@@ -78,7 +85,9 @@ void GetAimbotTarget()
 
 	std::vector<std::shared_ptr<ActorEntity>> templist;
 
+	EngineInstance.load()->PlayersMutex.lock();
 	templist = EngineInstance.load()->GetPlayers();
+	EngineInstance.load()->PlayersMutex.unlock();
 
 	QuickSortPlayers(templist, 0, templist.size() - 1);
 	Vector3 campos = Vector3(EngineInstance.load()->GetCameraCache().POV.Location.X, EngineInstance.load()->GetCameraCache().POV.Location.Y, EngineInstance.load()->GetCameraCache().POV.Location.Z);
@@ -142,12 +151,14 @@ void Aimbot()
 	Vector2 centreofscreen = Vector2(Configs.Overlay.OverrideResolution ? Configs.Overlay.Width / 2 : GetSystemMetrics(SM_CXSCREEN) / 2, Configs.Overlay.OverrideResolution ? Configs.Overlay.Height / 2 : GetSystemMetrics(SM_CYSCREEN) / 2);
 	if (Vector2::Distance(screenpos, centreofscreen) > Configs.Aimbot.FOV)
 		return;
+	if (AimbotTarget->GetHeadPosition().z <= AimbotTarget->GetPosition().z + 5)
+		return;
 	if (screenpos == Vector2::Zero())
 	{
 		AimbotTarget = nullptr;
 		return;
 	}
-	Vector2 diff;
+	Vector2 diff = {0,0};
 	if (Configs.Aimbot.Smoothing > 0)
 	{
 		float x = screenpos.x - centreofscreen.x;
@@ -166,11 +177,9 @@ void Aimbot()
 	{
 		diff.x = screenpos.x - centreofscreen.x;
 		diff.y = screenpos.y - centreofscreen.y;
-		printf("X: %f Y: %f\n", diff.x, diff.y);
 	}
 	float x = diff.x;
 	float y = diff.y;
-
 	if (KmboxStart + std::chrono::milliseconds(15) < std::chrono::system_clock::now())
 	{
 		kmbox::move(x, y);

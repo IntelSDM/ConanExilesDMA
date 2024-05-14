@@ -1,2 +1,3 @@
 #pragma once
-void Aimbot();
+extern void Aimbot();
+extern void AimbotDrawing();

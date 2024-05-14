@@ -11,11 +11,11 @@ public:
     }
     bool Enable = true;
     int MaxDistance = 250;
-    int Priority = 0;
+    int Priority = 1;
     int FOV = 200;
     int Aimkey = 5;
     bool DrawFOV = true;
-    int Smoothing = 0;
+    int Smoothing = 10;
     D2D1::ColorF FOVColour = D2D1::ColorF::White;
     void ToJsonColour(json* j, const std::string& name, D2D1::ColorF* colour)
     {

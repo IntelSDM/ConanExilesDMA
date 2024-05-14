@@ -16,6 +16,7 @@
 #include "TabListBoxController.h"
 #include "TextBox.h"
 #include "ConfigUtilities.h"
+#include "Kmbox.h"
 int SelectedTab = 1;
 int SelectedSubTab = 0;
 int TabCount = 0;
@@ -914,7 +915,36 @@ void CreateGUI()
 			otheresptab->Push(fontsize);
 		}
 		tabcontroller->Push(otheresptab);
-		auto overlaytab = std::make_shared<Tab>(LIT(L"Overlay"), 5, 105, &SelectedTab, 0, 20);
+		auto aimbottab = std::make_shared<Tab>(LIT(L"Aimbot"), 5, 105, &SelectedTab, 0, 20);
+		{
+			auto enable = std::make_shared<Toggle>(100, 5, LIT(L"Enable"), &Configs.Aimbot.Enable);
+			aimbottab->Push(enable);
+			auto drawfov = std::make_shared<Toggle>(100, 25, LIT(L"Draw FOV"), &Configs.Aimbot.DrawFOV);
+			aimbottab->Push(drawfov);
+			auto colourpicker = std::make_shared<ColourPicker>(180, 25, &Configs.Aimbot.FOVColour);
+			aimbottab->Push(colourpicker);
+			auto smoothing = std::make_shared<Slider<int>>(100, 45, 150, LIT(L"Smoothing"), LIT(L"%"), 0, 100, &Configs.Aimbot.Smoothing);
+			aimbottab->Push(smoothing);
+			auto fov = std::make_shared<Slider<int>>(100, 70, 150, LIT(L"FOV"), LIT(L"°"), 1, 1000, &Configs.Aimbot.FOV);
+			aimbottab->Push(fov);
+			auto maxdistance = std::make_shared<Slider<int>>(100, 95, 150, LIT(L"Max Distance"), LIT(L"m"), 0, 1000, &Configs.Aimbot.MaxDistance);
+			aimbottab->Push(maxdistance);
+			auto priority = std::make_shared<DropDown>(100, 133, LIT(L"Priority"), &Configs.Aimbot.Priority,
+				std::vector<std::wstring>{LIT(L"Distance"), LIT(L"Crosshair"), LIT(L"Both")});
+			aimbottab->Push(priority);
+			auto keybind = std::make_shared<KeyBind>(100, 175, LIT(L"Aim Key"), &Configs.Aimbot.Aimkey);
+			aimbottab->Push(keybind);
+			auto connecttokmbox = std::make_shared<Button>(210, 5, LIT(L"Connect To Kmbox"), []()
+				{
+					kmbox::KmboxInitialize("");
+
+
+
+				});
+			aimbottab->Push(connecttokmbox);
+		}
+		tabcontroller->Push(aimbottab);
+		auto overlaytab = std::make_shared<Tab>(LIT(L"Overlay"), 5, 130, &SelectedTab, 0, 20);
 		{
 			auto overrideresolution = std::make_shared<Toggle>(100, 5, LIT(L"Override W2S Resolution"), &Configs.Overlay.OverrideResolution);
 			overlaytab->Push(overrideresolution);
@@ -946,7 +976,7 @@ void CreateGUI()
 
 		}
 		tabcontroller->Push(overlaytab);
-		auto configtab = std::make_shared<Tab>(LIT(L"Config"), 5, 130, &SelectedTab, 0, 20);
+		auto configtab = std::make_shared<Tab>(LIT(L"Config"), 5, 155, &SelectedTab, 0, 20);
 		{
 			auto saveconfig = std::make_shared<Button>(100, 5, LIT(L"Save"), []()
 				{

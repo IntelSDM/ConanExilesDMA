@@ -122,6 +122,7 @@ void RenderFrame()
 	DrawBuildingEsp();
 	DrawAnimalEsp();
 	DrawPlayerEsp();
+	AimbotDrawing();
 	Render();
 	RenderTarget->EndDraw();
 }
