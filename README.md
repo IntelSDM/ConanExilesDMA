@@ -5,7 +5,7 @@ Player ESP, NPC ESP, Monster ESP, Aimbot, Speedhack
 
 <a href="https://youtu.be/zNhYCNFIo1M">
 <p align="Left">
-  <img src="Images/2.png" alt="Play Video" width="1280" height="540">
+  <img src="Images/3.png" alt="Play Video" width="1740" height="580">
 </p>
 </a>
 <p align="Left">
