@@ -278,5 +278,8 @@
     <ClInclude Include="Misc\Kmbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Config\MiscConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

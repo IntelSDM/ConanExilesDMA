@@ -764,7 +764,7 @@ void Memory::AddScatterWriteRequest(VMMDLL_SCATTER_HANDLE handle, uint64_t addre
 		return;
 	if (!VMMDLL_Scatter_PrepareWrite(handle, address, (PBYTE)buffer, size))
 	{
-		LOG("[!] Failed to prepare scatter write at 0x%p\n", address);
+		//LOG("[!] Failed to prepare scatter write at 0x%p\n", address);
 	}
 }
 

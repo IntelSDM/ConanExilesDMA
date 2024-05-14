@@ -71,6 +71,7 @@ void Engine::Cache()
 	}
 	std::vector<std::shared_ptr<ActorEntity>> actors;
 	auto handle = TargetProcess.CreateScatterHandle();
+	auto handle2 = TargetProcess.CreateScatterHandle();
 	for (uint64_t address : entitylist)
 	{
 		uintptr_t actor = address;
@@ -150,12 +151,14 @@ void Engine::Cache()
 	//	printf("Actor: %p\n", actor);
 	
 
-		std::shared_ptr<ActorEntity> entity = std::make_shared<ActorEntity>(actor,name, handle);
+		std::shared_ptr<ActorEntity> entity = std::make_shared<ActorEntity>(actor,name, handle,handle2);
 
 		actors.push_back(entity);
 	}
 	TargetProcess.ExecuteReadScatter(handle);
 	TargetProcess.CloseScatterHandle(handle);
+	TargetProcess.ExecuteWriteScatter(handle2);
+	TargetProcess.CloseScatterHandle(handle2);
 	handle = TargetProcess.CreateScatterHandle();
 	for (auto actor : actors)
 	{

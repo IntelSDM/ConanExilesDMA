@@ -75,6 +75,8 @@ private:
 	uint64_t ComponentToWorld = 0x1a0;  // // just guess this till you get a scale (1,1,1) and a roation with  0,0,-0.9998,-0.02
 	uint64_t CharacterNameOffset = 0x1B58; // BaseBPChar_C -> CharacterName
 	uint64_t PlayerNameOffset = 0x1B68; // BaseBPChar_C -> PlayerName
+	uint64_t CustomTimeDilation = 0x0080; // Actor -> CustomTimeDilation
+	uint64_t IsContainerLocked = 0x0789; // BP_Master_Placeables_C -> bIsContainerLocked
 	FString CharacterName;
 	FString PlayerName;
 	std::wstring WCharacterName;
@@ -91,7 +93,7 @@ private:
 public:
 	bool IsAnimal();
 	bool IsBuilding();
-	ActorEntity(uint64_t address,std::string name, VMMDLL_SCATTER_HANDLE handle);
+	ActorEntity(uint64_t address,std::string name, VMMDLL_SCATTER_HANDLE handle, VMMDLL_SCATTER_HANDLE handle2);
 	void SetUp1(VMMDLL_SCATTER_HANDLE handle);
 	void SetUp2(VMMDLL_SCATTER_HANDLE handle);
 	void SetUp3();
@@ -106,4 +108,5 @@ public:
 	bool GetIsLocalPlayer();
 	std::wstring GetCharacterName();
 	std::wstring GetPlayerName();
+	void WriteSpeed(float speed);
 };

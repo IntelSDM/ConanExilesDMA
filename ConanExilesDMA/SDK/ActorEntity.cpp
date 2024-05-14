@@ -2,6 +2,7 @@
 #include "ActorEntity.h"
 #include "Camera.h"
 #include "Globals.h"
+#include "ConfigUtilities.h"
 
 inline std::unordered_map<EntityType, std::wstring> EntityIDNames = {
 		{EntityType::Imp,LIT(L"Imp")},
@@ -113,7 +114,7 @@ bool ActorEntity::IsBuilding()
 		return true;
 	return false;
 }
-ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE handle)
+ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE handle, VMMDLL_SCATTER_HANDLE handle2)
 {
 	Class = address;
 	// could use a map but there are just so many varieties and i want to cover them all without dealing with all the colour variations
@@ -139,25 +140,46 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		EntityID = EntityType::Vulture;
 	else if (name.substr(0, 29) == "BP_PL_CraftingStation_Furnace")
 	{
-		TargetProcess.Write<bool>(Class + 0x0789, false);
+		if (Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2, Class + IsContainerLocked, false);
 		EntityID = EntityType::Furnace;
 	}
 	else if (name.substr(0, 27) == "BP_PL_CraftingStation_Armor")
+	{
+		if (Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2, Class + IsContainerLocked, false);
 		EntityID = EntityType::Armorer;
+	}
 	else if (name.substr(0, 27) == "BP_PL_CraftingStation_Metal")
+	{
+		if (Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2,Class + IsContainerLocked, false);
 		EntityID = EntityType::MetalSmith;
+	}
 	else if (name == "LandClaim")
 		EntityID = EntityType::LandClaim;
 	else if (name.substr(0, 18) == "BP_BuildFoundation")
 		EntityID = EntityType::Foundation;
 	else if (name.substr(0, 24) == "BP_PL_WorkStation_Tanner")
+	{
+		if (Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2,Class + IsContainerLocked, false);
 		EntityID = EntityType::Tanner;
+	}
 	else if (name.substr(0, 23) == "BP_NPC_Wildlife_Gazelle")
 		EntityID = EntityType::Gazelle;
 	else if (name.substr(0, 19) == "BP_PL_Bedroll_Fiber")
+	{
+		if (Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2,Class + IsContainerLocked, false);
 		EntityID = EntityType::Bedroll;
+	}
 	else if (name.substr(0, 27) == "BP_PL_WorkStation_Alchemist")
+	{
+		if (Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2,Class + IsContainerLocked, false);
 		EntityID = EntityType::Alchemist;
+	}
 	else if (name == "BP_NPC_Wildlife_RocknoseKingBoss_C")
 		EntityID = EntityType::RockNoseBoss;
 	else if (name.substr(0, 24) == "BP_NPC_Wildlife_Rocknose")
@@ -224,13 +246,15 @@ ActorEntity::ActorEntity(uint64_t address,std::string name,VMMDLL_SCATTER_HANDLE
 		EntityID = EntityType::Bear;
 	else if (name.substr(0, 11) == "BP_PL_Chest")
 	{
-		TargetProcess.Write<bool>(Class + 0x005C, false); // View locked contents
+		if (Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2,Class + IsContainerLocked, false); // View locked contents
 		
 		EntityID = EntityType::Chest;
 	}
 	else if (name.substr(0,5) == "BP_PL")
 	{
-		TargetProcess.Write<bool>(Class + 0x0789, false); // View locked contents
+		if(Configs.Misc.LockedContents)
+		TargetProcess.AddScatterWriteRequest<bool>(handle2,Class + IsContainerLocked, false); // View locked contents
 		EntityID = EntityType::OtherBuildable;
 		}
 	else if(name == "BasePlayerChar_C")
@@ -289,7 +313,8 @@ void ActorEntity::SetUp1(VMMDLL_SCATTER_HANDLE handle)
 			//	TargetProcess.Write<Vector3>(charactermovement + 0x010C, Vector3(1,1,1));
 				// BasePlayerChar_C player is this // HeadVisible
 				IsLocalPlayer = true;
-				TargetProcess.Write<float>(Class + 0x0080, 3); // speedhack
+				if(Configs.Misc.Speedhack)
+				TargetProcess.Write<float>(Class + CustomTimeDilation, Configs.Misc.Speed); // speedhack
 		
 				//TargetProcess.Write<float>(charactermovement + 0x01F0, 10000);
 			}
@@ -389,4 +414,10 @@ std::wstring ActorEntity::GetPlayerName()
 	return WPlayerName;
 }
 
-
+void ActorEntity::WriteSpeed(float speed)
+{
+	if (EntityID == Player)
+	{
+		TargetProcess.Write<float>(Class + CustomTimeDilation, speed); // speedhack
+	}
+}

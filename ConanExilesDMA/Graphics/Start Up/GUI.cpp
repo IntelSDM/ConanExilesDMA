@@ -17,6 +17,7 @@
 #include "TextBox.h"
 #include "ConfigUtilities.h"
 #include "Kmbox.h"
+#include "Globals.h"
 int SelectedTab = 1;
 int SelectedSubTab = 0;
 int TabCount = 0;
@@ -944,7 +945,42 @@ void CreateGUI()
 			aimbottab->Push(connecttokmbox);
 		}
 		tabcontroller->Push(aimbottab);
-		auto overlaytab = std::make_shared<Tab>(LIT(L"Overlay"), 5, 130, &SelectedTab, 0, 20);
+		auto misctab = std::make_shared<Tab>(LIT(L"Misc"), 5, 130, &SelectedTab, 0, 20);
+		{
+		auto speedhack = std::make_shared<Toggle>(100, 5, LIT(L"Speedhack"), &Configs.Misc.Speedhack);
+		speedhack->SetValueChangedEvent([]()
+			{
+				if (Configs.Misc.Speedhack)
+				{
+					EngineInstance.load()->LocalPlayer.load()->WriteSpeed(Configs.Misc.Speed);
+
+				}
+				else
+				{
+					EngineInstance.load()->LocalPlayer.load()->WriteSpeed(1);
+				}
+			});
+		misctab->Push(speedhack);
+		auto speedamount = std::make_shared<Slider<float>>(100, 25, 150, LIT(L"Speed Amount"), LIT(L"x"), 1, 20, &Configs.Misc.Speed);
+		speedamount->SetValueChangedEvent([]()
+			{
+				if (Configs.Misc.Speedhack)
+				{
+					EngineInstance.load()->LocalPlayer.load()->WriteSpeed(Configs.Misc.Speed);
+
+				}
+				else
+				{
+					EngineInstance.load()->LocalPlayer.load()->WriteSpeed(1);
+				}
+			});
+		misctab->Push(speedamount);
+		auto lockedcontents = std::make_shared<Toggle>(100, 50, LIT(L"View Locked Contents"), &Configs.Misc.LockedContents);
+		misctab->Push(lockedcontents);
+
+		}
+		tabcontroller->Push(misctab);
+		auto overlaytab = std::make_shared<Tab>(LIT(L"Overlay"), 5, 155, &SelectedTab, 0, 20);
 		{
 			auto overrideresolution = std::make_shared<Toggle>(100, 5, LIT(L"Override W2S Resolution"), &Configs.Overlay.OverrideResolution);
 			overlaytab->Push(overrideresolution);
@@ -976,7 +1012,7 @@ void CreateGUI()
 
 		}
 		tabcontroller->Push(overlaytab);
-		auto configtab = std::make_shared<Tab>(LIT(L"Config"), 5, 155, &SelectedTab, 0, 20);
+		auto configtab = std::make_shared<Tab>(LIT(L"Config"), 5, 180, &SelectedTab, 0, 20);
 		{
 			auto saveconfig = std::make_shared<Button>(100, 5, LIT(L"Save"), []()
 				{
