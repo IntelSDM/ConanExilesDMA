@@ -11,8 +11,8 @@ private:
 	uint64_t PersistentLevel = 0x0030; // World  -> PersistentLevel
 	uint64_t ActorsOffset = 0xA0; // Ulevel -> Actors
 	TArray<uint64_t> Actors; // Ulevel -> Actors
-	uint64_t GWorld = 0x5B70AE0;
-	uint64_t GName = 0x5A736A8;
+	uint64_t GWorld = 0x5B72B60;
+	uint64_t GName = 0x5A75728;
 	uint64_t LocalPlayers = 0x38; // GameInstance -> LocalPlayers
 	uint64_t PlayerController = 0x0030; // Player -> PlayerController
 	uint64_t AcknowledgedPawn = 0x0460;
